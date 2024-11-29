@@ -92,7 +92,7 @@ namespace aruco_detect
             cv_bridge::CvImagePtr cv_ptr;
             try
             {
-                cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+                cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::MONO8);
                 cv::resize(cv_ptr->image, cv_ptr->image, cv::Size(image_width, image_height));
             }
             catch (cv_bridge::Exception& e)

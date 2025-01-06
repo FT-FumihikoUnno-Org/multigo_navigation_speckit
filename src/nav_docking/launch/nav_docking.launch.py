@@ -11,7 +11,7 @@ def generate_launch_description():
     desired_aruco_marker_id_right = desired_aruco_marker_id_left + 1
     aruco_distance_offset = 0.31
     aruco_left_right_offset = 0.17
-    aruco_distance_offset_dual = 0.435
+    aruco_distance_offset_dual = 0.430
     aruco_center_offset_dual = 0.0
 
     # Get the path to the pid_params.yaml file

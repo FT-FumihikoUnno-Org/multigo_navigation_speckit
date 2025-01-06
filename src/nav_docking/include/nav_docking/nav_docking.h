@@ -50,8 +50,7 @@ namespace nav_docking
 
         rclcpp::TimerBase::SharedPtr front_timer_;
         rclcpp::TimerBase::SharedPtr side_timer_;
-        rclcpp::Time marker_time_left = this->now();
-        rclcpp::Time marker_time_right = this->now();
+        
 
         std::string base_frame = "base_link";
         std::string camera_left_frame= "camera_front_left_frame";
@@ -94,6 +93,8 @@ namespace nav_docking
         double prev_error_center;
         double prev_error_rotation;
 
+        rclcpp::Time marker_time_left = this->now();
+        rclcpp::Time marker_time_right = this->now();
         double callback_duration_left; // loop time
         double callback_duration_right; // loop time
         double callback_duration_side; // loop time

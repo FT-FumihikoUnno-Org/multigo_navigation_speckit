@@ -1,0 +1,7 @@
+[submodule "src/third_party/rtabmap"]
+	path = src/third_party/rtabmap
+	url = https://github.com/introlab/rtabmap.git
+[submodule "src/third_party/rtabmap_ros"]
+	path = src/third_party/rtabmap_ros
+	url = https://github.com/introlab/rtabmap_ros.git
+	branch = ros2

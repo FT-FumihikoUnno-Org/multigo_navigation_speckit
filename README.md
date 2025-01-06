@@ -20,9 +20,11 @@ Multi-Go autonomous robot for wheelchair and cart mobility.
 	sudo apt install ros-humble-pcl-conversions ros-humble-pcl-msgs python3-pip
 	pip3 install pyyaml
 	sudo apt install ros-$ROS_DISTRO-rtabmap-ros
+ 	sudo apt-get install ros-humble-pcl-ros
 	sudo apt update
 
 Install NAV2 
+
 	https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/
 
 
@@ -46,11 +48,11 @@ Install NAV2
     source install/setup.bash 
 
 Simulation:
+
     ros2 launch boot simulation.launch.py 
     ros2 launch boot run.launch.py 
 
 Robot: 
+
     ros2 launch boot boot.launch.py 
     ros2 launch boot run.launch.py 
-    
-

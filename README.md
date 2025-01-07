@@ -21,6 +21,8 @@ Multi-Go autonomous robot for wheelchair and cart mobility.
 	pip3 install pyyaml
 	sudo apt install ros-$ROS_DISTRO-rtabmap-ros
  	sudo apt-get install ros-humble-pcl-ros
+ 	sudo apt install ros-humble-rtabmap-slam
+ 	sudo apt install ros-humble-pointcloud-to-laserscan
 	sudo apt update
 
 Install NAV2 

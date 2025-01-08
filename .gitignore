@@ -9,3 +9,6 @@ log
 build
 install
 __pycache__
+
+# Ignore map updates
+src/boot/maps/rtabmap.db

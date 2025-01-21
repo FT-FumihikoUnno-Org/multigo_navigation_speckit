@@ -3,7 +3,7 @@
 namespace nav_docking
 {
     Nav_docking::Nav_docking()
-        : Node("nav_docking")
+        : Node("nav_docking") 
     {
         // Initialize the action server
         action_server_ = rclcpp_action::create_server<Dock>(
@@ -102,6 +102,8 @@ namespace nav_docking
 
     }
 
+    //============================================TESTING BEGIN==============================================//
+
     rclcpp_action::GoalResponse Nav_docking::handle_goal(
         const rclcpp_action::GoalUUID &uuid,
         std::shared_ptr<const Dock::Goal> goal)
@@ -142,30 +144,43 @@ namespace nav_docking
         auto feedback = std::make_shared<Dock::Feedback>();
         auto result = std::make_shared<Dock::Result>();
 
+        enable_callback = true;
+
         // Simulated docking process
-        for (int i = 0; i <= 100; i += 20)
-        {
+        
             if (goal_handle->is_canceling())
             {
                 RCLCPP_INFO(this->get_logger(), "Goal canceled.");
                 goal_handle->canceled(result);
+                enable_callback = false;
                 return;
             }
 
             // Provide feedback
-            feedback->distance = static_cast<double>(100 - i);
+
+        if (stage_5_docking_status == true){
+            result->success = true;
+            goal_handle->succeed(result);
+            RCLCPP_INFO(this->get_logger(), "Goal succeeded.");
+            enable_callback = false;
+        }
+        else{
+            feedback->distance = static_cast<double>(aruco_distance_offset_dual);
             goal_handle->publish_feedback(feedback);
             RCLCPP_INFO(this->get_logger(), "Feedback: distance = %.2f", feedback->distance);
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
 
+
+        // if (stage_5_docking_status == false){
+            
+        // }
+        
         // Complete the goal
-        result->success = true;
-        goal_handle->succeed(result);
-        RCLCPP_INFO(this->get_logger(), "Goal succeeded.");
+        
+        
     }
 
+    //============================================TESTING END==============================================//
 
     double Nav_docking::calculate(double error, double& prev_error, 
                                double kp, double ki, double kd, double callback_duration, 
@@ -291,6 +306,7 @@ namespace nav_docking
 
     void Nav_docking::arucoPoseLeftCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg)
     {
+        if(!enable_callback) return;
         this->get_parameter("desired_aruco_marker_id_left", desired_aruco_marker_id_left);
         this->get_parameter("aruco_distance_offset_dual", aruco_distance_offset_dual);
         this->get_parameter("aruco_center_offset_dual", aruco_center_offset_dual);
@@ -357,6 +373,7 @@ namespace nav_docking
 
     void Nav_docking::arucoPoseRightCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg)
     {
+        if(!enable_callback) return;
         this->get_parameter("desired_aruco_marker_id_right", desired_aruco_marker_id_right);
         this->get_parameter("aruco_distance_offset_dual", aruco_distance_offset_dual);
         this->get_parameter("aruco_center_offset_dual", aruco_center_offset_dual);
@@ -423,6 +440,7 @@ namespace nav_docking
 
     void Nav_docking::frontMarkerCmdVelPublisher()
     {
+        if(!enable_callback) return;
         rclcpp::Time current_time = this->now();
         geometry_msgs::msg::Twist twist_msg;
         double marker_x;
@@ -525,6 +543,7 @@ namespace nav_docking
 
     void Nav_docking::sideMarkerCmdVelPublisher()
     {
+        if(!enable_callback) return;
         rclcpp::Time current_time = this->now();
         geometry_msgs::msg::Twist twist_msg;
         // Calculate dt as the duration since the last loop

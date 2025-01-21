@@ -5,6 +5,15 @@ namespace nav_docking
     Nav_docking::Nav_docking()
         : Node("nav_docking")
     {
+        // Initialize the action server
+        action_server_ = rclcpp_action::create_server<Dock>(
+            this,
+            "dock",
+            std::bind(&Nav_docking::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
+            std::bind(&Nav_docking::handle_cancel, this, std::placeholders::_1),
+            std::bind(&Nav_docking::handle_accepted, this, std::placeholders::_1));
+
+        //RCLCPP_INFO(this->get_logger(), "Nav_docking action server started.");
 
         this->set_parameter(rclcpp::Parameter("use_sim_time", false));
         // Declare node parameters
@@ -92,6 +101,71 @@ namespace nav_docking
         std::bind(&Nav_docking::sideMarkerCmdVelPublisher, this));
 
     }
+
+    rclcpp_action::GoalResponse Nav_docking::handle_goal(
+        const rclcpp_action::GoalUUID &uuid,
+        std::shared_ptr<const Dock::Goal> goal)
+    {
+        RCLCPP_INFO(this->get_logger(), "Received a goal request with dock_request: %d", goal->dock_request);
+
+        // Validate the goal
+        if (goal->dock_request)
+        {
+            RCLCPP_INFO(this->get_logger(), "Goal accepted.");
+            return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+        }
+        else
+        {
+            RCLCPP_WARN(this->get_logger(), "Goal rejected.");
+            return rclcpp_action::GoalResponse::REJECT;
+        }
+    }
+
+    rclcpp_action::CancelResponse Nav_docking::handle_cancel(
+        const std::shared_ptr<GoalHandleDock> goal_handle)
+    {
+        RCLCPP_INFO(this->get_logger(), "Received a request to cancel the goal.");
+        return rclcpp_action::CancelResponse::ACCEPT;
+    }
+
+    void Nav_docking::handle_accepted(const std::shared_ptr<GoalHandleDock> goal_handle)
+    {
+        // Start a new thread to execute the goal
+        std::thread{std::bind(&Nav_docking::execute, this, goal_handle)}.detach();
+    }
+
+    void Nav_docking::execute(const std::shared_ptr<GoalHandleDock> goal_handle)
+    {
+        RCLCPP_INFO(this->get_logger(), "Executing goal...");
+
+        const auto goal = goal_handle->get_goal();
+        auto feedback = std::make_shared<Dock::Feedback>();
+        auto result = std::make_shared<Dock::Result>();
+
+        // Simulated docking process
+        for (int i = 0; i <= 100; i += 20)
+        {
+            if (goal_handle->is_canceling())
+            {
+                RCLCPP_INFO(this->get_logger(), "Goal canceled.");
+                goal_handle->canceled(result);
+                return;
+            }
+
+            // Provide feedback
+            feedback->distance = static_cast<double>(100 - i);
+            goal_handle->publish_feedback(feedback);
+            RCLCPP_INFO(this->get_logger(), "Feedback: distance = %.2f", feedback->distance);
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+
+        // Complete the goal
+        result->success = true;
+        goal_handle->succeed(result);
+        RCLCPP_INFO(this->get_logger(), "Goal succeeded.");
+    }
+
 
     double Nav_docking::calculate(double error, double& prev_error, 
                                double kp, double ki, double kd, double callback_duration, 

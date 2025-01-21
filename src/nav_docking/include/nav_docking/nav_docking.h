@@ -26,9 +26,25 @@ namespace nav_docking
     {
     public:
         Nav_docking();
+    private:
+
         using Dock = nav_interface::action::Dock;
         using GoalHandleDock = rclcpp_action::ServerGoalHandle<Dock>;
-    private:
+
+        // Action server
+        rclcpp_action::Server<Dock>::SharedPtr action_server_;
+
+        // Goal handling methods
+        rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID &uuid,
+                                                std::shared_ptr<const Dock::Goal> goal);
+
+        rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleDock> goal_handle);
+
+        void handle_accepted(const std::shared_ptr<GoalHandleDock> goal_handle);
+
+        // Execution of the goal
+        void execute(const std::shared_ptr<GoalHandleDock> goal_handle);
+        
 
         void arucoPoseFrontCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg);
         void arucoPoseLeftCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg);

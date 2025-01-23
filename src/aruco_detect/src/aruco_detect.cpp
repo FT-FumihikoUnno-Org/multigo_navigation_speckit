@@ -16,11 +16,11 @@ namespace aruco_detect
         this->get_parameter("camera_topic", camera_topic);
         this->get_parameter("camera_info", camera_info);
 
-        RCLCPP_INFO_STREAM(this->get_logger(), "desired_aruco_marker_id: " << desired_aruco_marker_id);
-        RCLCPP_INFO_STREAM(this->get_logger(), "marker_width: " << marker_width);
-        RCLCPP_INFO_STREAM(this->get_logger(), "camera_topic: " << camera_topic);
-        RCLCPP_INFO_STREAM(this->get_logger(), "camera_info: " << camera_info);
-        RCLCPP_INFO_STREAM(this->get_logger(), "dictionary ID : " << dictionary);
+        // RCLCPP_INFO_STREAM(this->get_logger(), "desired_aruco_marker_id: " << desired_aruco_marker_id);
+        // RCLCPP_INFO_STREAM(this->get_logger(), "marker_width: " << marker_width);
+        // RCLCPP_INFO_STREAM(this->get_logger(), "camera_topic: " << camera_topic);
+        // RCLCPP_INFO_STREAM(this->get_logger(), "camera_info: " << camera_info);
+        // RCLCPP_INFO_STREAM(this->get_logger(), "dictionary ID : " << dictionary);
 
         image_sub = this->create_subscription<sensor_msgs::msg::Image>(
             camera_topic, 10, 
@@ -75,8 +75,8 @@ namespace aruco_detect
 
         cam_info_received = true;  // set to true.  
         }
-        RCLCPP_INFO_STREAM(this->get_logger(), "Camera Info: frame_id=" << frame_id.c_str()<<  " image width " << image_width
-                                                << " image height "<< image_height);
+        // RCLCPP_INFO_STREAM(this->get_logger(), "Camera Info: frame_id=" << frame_id.c_str()<<  " image width " << image_width
+        //                                         << " image height "<< image_height);
     }
 
 
@@ -116,7 +116,7 @@ namespace aruco_detect
         // Prepare a PoseArray message to publish all marker poses
         geometry_msgs::msg::PoseArray pose_array_msg;
 
-        RCLCPP_INFO_STREAM(this->get_logger(), "frame ID:  "<< frame_id );
+        // RCLCPP_INFO_STREAM(this->get_logger(), "frame ID:  "<< frame_id );
 
         // Check if camera parameters are initialized
         if (camera_matrix.empty() || dist_coeffs.empty())

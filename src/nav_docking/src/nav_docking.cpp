@@ -451,7 +451,7 @@ namespace nav_docking
         callback_duration_left = duration.seconds();  // seconds as a double
         duration = current_time - marker_time_right;
         callback_duration_right = duration.seconds();  // seconds as a double
-        RCLCPP_INFO(this->get_logger(), "front camera callback_duration: %f", callback_duration_left);
+        // RCLCPP_INFO(this->get_logger(), "front camera callback_duration: %f", callback_duration_left);
 
         // stage_4_docking_status = true;
         // Calculate the error
@@ -510,8 +510,8 @@ namespace nav_docking
             {
                 cmd_vel_pub->publish(twist_msg);
                 stage_4_docking_status = false;
-                RCLCPP_INFO_STREAM(this->get_logger(), "Publish pub:x " << twist_msg.linear.x);
-                RCLCPP_INFO_STREAM(this->get_logger(), "Pubish pub:y " << twist_msg.linear.y);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "Publish pub:x " << twist_msg.linear.x);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "Pubish pub:y " << twist_msg.linear.y);
             }
             else
             {
@@ -520,7 +520,7 @@ namespace nav_docking
                 twist_msg.angular.z = 0.0;
                 cmd_vel_pub->publish(twist_msg);
                 stage_4_docking_status = true;  // publish docking status
-                RCLCPP_INFO_STREAM(this->get_logger(), "stage_4_docking_status true " << stage_4_docking_status);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "stage_4_docking_status true " << stage_4_docking_status);
             }
         }
         else
@@ -595,8 +595,8 @@ namespace nav_docking
 
                 // RCLCPP_INFO_STREAM(this->get_logger(), "twist_pub:y: " << twist_msg.linear.y);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:anglular Z: " << twist_msg.angular.z);
-                RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_x: " << right_marker_x);
-                RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_x: " << left_marker_x);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_x: " << right_marker_x);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_x: " << left_marker_x);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_center #####: " << error_center);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:y: " << twist_msg.linear.y);
 

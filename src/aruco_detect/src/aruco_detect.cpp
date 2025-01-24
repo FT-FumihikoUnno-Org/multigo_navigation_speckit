@@ -16,11 +16,11 @@ namespace aruco_detect
         this->get_parameter("camera_topic", camera_topic);
         this->get_parameter("camera_info", camera_info);
 
-        // RCLCPP_INFO_STREAM(this->get_logger(), "desired_aruco_marker_id: " << desired_aruco_marker_id);
-        // RCLCPP_INFO_STREAM(this->get_logger(), "marker_width: " << marker_width);
-        // RCLCPP_INFO_STREAM(this->get_logger(), "camera_topic: " << camera_topic);
-        // RCLCPP_INFO_STREAM(this->get_logger(), "camera_info: " << camera_info);
-        // RCLCPP_INFO_STREAM(this->get_logger(), "dictionary ID : " << dictionary);
+        RCLCPP_INFO_STREAM(this->get_logger(), "desired_aruco_marker_id: " << desired_aruco_marker_id);
+        RCLCPP_INFO_STREAM(this->get_logger(), "marker_width: " << marker_width);
+        RCLCPP_INFO_STREAM(this->get_logger(), "camera_topic: " << camera_topic);
+        RCLCPP_INFO_STREAM(this->get_logger(), "camera_info: " << camera_info);
+        RCLCPP_INFO_STREAM(this->get_logger(), "dictionary ID : " << dictionary);
 
         image_sub = this->create_subscription<sensor_msgs::msg::Image>(
             camera_topic, 1, 

@@ -1,5 +1,5 @@
 repositories:
  mg_master:
     type: git
-    url: https://github.com/Futu-reADS/mg_master.git
+    url: git@github.com:Futu-reADS/mg_master.git
     version: main

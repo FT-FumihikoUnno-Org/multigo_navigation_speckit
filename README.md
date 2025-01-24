@@ -83,6 +83,8 @@ Open a new terminal window and run these commands:
 Open a new terminal window and run these commands:
 
     git clone --recurse-submodules -b feature/wheelchair_docking_dual_cam https://github.com/Futu-reADS/multigo.git
+    vcs import src < multigo.repos --recursive
+    vcs pull src
 
 
 ### Install

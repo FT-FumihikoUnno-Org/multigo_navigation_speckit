@@ -45,10 +45,10 @@ install(
 )
 
 # Install include directories
-install(
-  DIRECTORY include/
-  DESTINATION include/${PROJECT_NAME}
-)
+#install(
+#  DIRECTORY include/
+#  DESTINATION include/${PROJECT_NAME}
+#)
 
 # Install config directory into the share folder
 install(

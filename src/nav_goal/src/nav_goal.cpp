@@ -62,11 +62,11 @@ namespace nav_goal
         if (std::regex_search(frame_id, match, marker_id_regex) && match.size() > 1)
         {
             marker_id = std::stoi(match[1].str());
-            RCLCPP_INFO(rclcpp::get_logger("MarkerIDLogger"), "Detected marker ID: %d", marker_id);
+            // RCLCPP_INFO(rclcpp::get_logger("MarkerIDLogger"), "Detected marker ID: %d", marker_id);
         }
         else
         {
-            RCLCPP_WARN(rclcpp::get_logger("MarkerIDLogger"), "Could not extract marker ID from frame_id: %s", frame_id.c_str());
+            // RCLCPP_WARN(rclcpp::get_logger("MarkerIDLogger"), "Could not extract marker ID from frame_id: %s", frame_id.c_str());
         }
     
         return marker_id;
@@ -248,7 +248,7 @@ namespace nav_goal
         callback_duration_left = duration.seconds();  // seconds as a double
         duration = current_time - marker_time_right;
         callback_duration_right = duration.seconds();  // seconds as a double
-        RCLCPP_INFO(this->get_logger(), "front camera callback_duration: %f", callback_duration_left);
+        // RCLCPP_INFO(this->get_logger(), "front camera callback_duration: %f", callback_duration_left);
 
         // stage_4_docking_status = true;
         // Calculate the error
@@ -259,9 +259,9 @@ namespace nav_goal
         {
             // Publish the goal
             goal_pub->publish(goal_msg_left);
-            RCLCPP_INFO(this->get_logger(), "Publishing LEFT goal: Position(%f, %f, %f), Orientation(%f, %f, %f, %f)",
-                        goal_msg_left.pose.position.x, goal_msg_left.pose.position.y, goal_msg_left.pose.position.z,
-                        goal_msg_left.pose.orientation.x, goal_msg_left.pose.orientation.y, goal_msg_left.pose.orientation.z, goal_msg_left.pose.orientation.w); 
+            // RCLCPP_INFO(this->get_logger(), "Publishing LEFT goal: Position(%f, %f, %f), Orientation(%f, %f, %f, %f)",
+            //             goal_msg_left.pose.position.x, goal_msg_left.pose.position.y, goal_msg_left.pose.position.z,
+            //             goal_msg_left.pose.orientation.x, goal_msg_left.pose.orientation.y, goal_msg_left.pose.orientation.z, goal_msg_left.pose.orientation.w); 
         }
         else if (callback_duration_left > callback_duration_right && 
                 callback_duration_right < marker_delay_threshold_sec &&
@@ -269,9 +269,9 @@ namespace nav_goal
         {
             // Publish the goal
             goal_pub->publish(goal_msg_right);
-            RCLCPP_INFO(this->get_logger(), "Publishing RIGHT goal: Position(%f, %f, %f), Orientation(%f, %f, %f, %f)",
-                        goal_msg_right.pose.position.x, goal_msg_right.pose.position.y, goal_msg_right.pose.position.z,
-                        goal_msg_right.pose.orientation.x, goal_msg_right.pose.orientation.y, goal_msg_right.pose.orientation.z, goal_msg_right.pose.orientation.w); 
+            // RCLCPP_INFO(this->get_logger(), "Publishing RIGHT goal: Position(%f, %f, %f), Orientation(%f, %f, %f, %f)",
+            //             goal_msg_right.pose.position.x, goal_msg_right.pose.position.y, goal_msg_right.pose.position.z,
+            //             goal_msg_right.pose.orientation.x, goal_msg_right.pose.orientation.y, goal_msg_right.pose.orientation.z, goal_msg_right.pose.orientation.w); 
         }
     }
          

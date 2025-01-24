@@ -10,11 +10,9 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <iostream>
 
-std::shared_ptr<sensor_msgs::msg::CameraInfo> load_yaml_file()
+std::shared_ptr<sensor_msgs::msg::CameraInfo> load_yaml_file(std::string calib_file_path)
 {
   std::shared_ptr<sensor_msgs::msg::CameraInfo> camera_info_msg = std::make_shared<sensor_msgs::msg::CameraInfo>();
-  std::string package_path = ament_index_cpp::get_package_share_directory("camera_publisher");
-  std::string calib_file_path = package_path + "/config/calib.yaml";
 
   try
   {
@@ -57,6 +55,8 @@ int main(int argc, char **argv)
   // Initialize ROS 2
   rclcpp::init(argc, argv);
   std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("image_publisher");
+  std::string package_path = ament_index_cpp::get_package_share_directory("camera_publisher");
+  std::string calib_file_path = package_path + "/config/calib.yaml";
   // Retrieve parameters
   int camera_index;
   std::string camera_topic;
@@ -65,13 +65,15 @@ int main(int argc, char **argv)
   int desired_fps;
   bool force_desired_fps = false;
   // Declare parameters with default values
+  node->declare_parameter<std::string>("camera_calib_file", calib_file_path);
   node->declare_parameter<int>("camera_index", 0);
   node->declare_parameter<std::string>("frame_id", "/default_frame_id");
   node->declare_parameter<std::string>("camera_topic", "/default_camera_topic");
   node->declare_parameter<std::string>("camera_info_topic", "/default_camera_info");
   node->declare_parameter<int>("desired_fps", 5);
   node->declare_parameter<bool>("force_desired_fps", false);
-  
+
+  node->get_parameter("camera_calib_file", calib_file_path);
   node->get_parameter("camera_index", camera_index);
   node->get_parameter("frame_id", frame_id);
   node->get_parameter("camera_topic", camera_topic);
@@ -79,7 +81,7 @@ int main(int argc, char **argv)
   node->get_parameter("desired_fps", desired_fps);
   node->get_parameter("force_desired_fps", force_desired_fps);
 
-  std::shared_ptr<sensor_msgs::msg::CameraInfo> camera_info_msg = load_yaml_file();
+  std::shared_ptr<sensor_msgs::msg::CameraInfo> camera_info_msg = load_yaml_file(calib_file_path);
   camera_info_msg->header.frame_id = frame_id; // Set to ID from launch file.
   // Open video capture
   int video_source = camera_index;

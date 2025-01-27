@@ -3,3 +3,8 @@ repositories:
     type: git
     url: git@github.com:Futu-reADS/mg_master.git
     version: main
+    
+ boot:
+    type: git
+    url: git@github.com:Futu-reADS/multigo_launch.git
+    version: main

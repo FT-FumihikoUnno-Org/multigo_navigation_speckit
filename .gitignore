@@ -13,4 +13,10 @@ __pycache__
 # Ignore map updates
 src/boot/maps/rtabmap.db
 
+# Ignore different repositories
+src/mg_master
+src/multigo_master
+
+src/boot
+src/multigo_launch
 

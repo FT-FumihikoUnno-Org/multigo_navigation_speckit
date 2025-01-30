@@ -90,7 +90,7 @@ Open a new terminal window and run these commands:
 
 ### Install
     
-    cd ~/multigo
+    cd multigo_navigation
     rosdep update
     rosdep install --from-paths src --ignore-src -r -y
     colcon build --symlink-install

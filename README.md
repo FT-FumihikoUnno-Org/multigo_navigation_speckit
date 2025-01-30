@@ -83,7 +83,7 @@ Open a new terminal window and run these commands:
 Open a new terminal window and run these commands:
 
     git clone --recurse-submodules -b dev/okinawa_docking_test https://github.com/Futu-reADS/multigo_navigation.git
-    cd multigo
+    cd multigo_navigation
     vcs import src < multigo.repos --recursive
     vcs pull src
 
@@ -101,7 +101,7 @@ Close all terminals and reopen them for the following:
 ## Run	
   Run following commands:
   
-    cd multigo
+    cd multigo_navigation
     source install/setup.bash 
 
 Simulation:

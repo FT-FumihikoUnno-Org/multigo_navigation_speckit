@@ -101,6 +101,7 @@ int main(int argc, char **argv)
   RCLCPP_INFO(node->get_logger(), "Camera Index: %u", video_source);
   RCLCPP_INFO(node->get_logger(), "Requested Camera width: %u", camera_info_msg->width);
   RCLCPP_INFO(node->get_logger(), "Requested Camera height: %u", camera_info_msg->height);
+  RCLCPP_INFO(node->get_logger(), "FrameID: %s", camera_info_msg->header.frame_id.c_str());
 
   // Initialize image transport and publishers
   image_transport::TransportHints transport_hints(node.get(), "compressed");
@@ -124,7 +125,7 @@ int main(int argc, char **argv)
       msg = cv_bridge::CvImage(hdr, "mono8", gray_frame).toImageMsg();
       image_pub.publish(msg);
       camera_info_pub->publish(*camera_info_msg);
-    } 
+    }
     else 
     {
       // RCLCPP_WARN(node->get_logger(), "Captured empty frame. Skipping.");

@@ -99,7 +99,8 @@ namespace nav_docking
         tf2::Vector3 front_transformed_marker_t;
         double front_roll, front_pitch, front_yaw;
         tf2::Vector3 left_transformed_marker_t;
-        double left_roll, left_pitch, left_yaw;
+        double left_roll, left_pitch, left_yaw, prev_yaw;
+
         tf2::Vector3 right_transformed_marker_t;
         double right_roll, right_pitch, right_yaw;
 

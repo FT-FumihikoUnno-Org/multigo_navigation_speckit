@@ -93,7 +93,6 @@ namespace aruco_detect
             try
             {
                 cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::MONO8);
-                // cv::resize(cv_ptr->image, cv_ptr->image, cv::Size(image_width, image_height));
             }
             catch (cv_bridge::Exception& e)
             {
@@ -144,29 +143,28 @@ namespace aruco_detect
                     pose_array_msg.header.frame_id = "aruco_marker_" + std::to_string(markerIds[i]);
                     cv::aruco::drawAxis(image, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], marker_width);
 
-                    // Left Right inverted tvecs[i][0]
-                    // Height inverted tvecs[i][1]
-                    // Distance tvecs[i][2]
-
                     // Set pose.
-                    quat.setRPY(rvecs[i][0], rvecs[i][2], -rvecs[i][1]);
                     pose.position.x = tvecs[i][2];
                     pose.position.y = -tvecs[i][0];
-                    pose.position.z = -tvecs[i][1];
+                    pose.position.z = tvecs[i][1];
+                    // Convert the rotation vector (rvecs[i]) to a quaternion (assuming rvecs[i] contains roll, pitch, yaw)
+                    quat.setRPY(rvecs[i][0], rvecs[i][1], rvecs[i][2]);  // Roll, Pitch, Yaw
+                    quat.normalize();
+                    // Set the quaternion to the pose orientation
                     pose.orientation.x = quat.x();
                     pose.orientation.y = quat.y();
                     pose.orientation.z = quat.z();
                     pose.orientation.w = quat.w();
 
                     // Overlay the marker position text on the image
-                    std::ostringstream oss;
-                    oss << std::fixed << std::setprecision(2)
+                    std::ostringstream oss_1;
+                    oss_1 << std::fixed << std::setprecision(2)
                                         << "Marker ID: " << desired_aruco_marker_id 
                                         << " Pos: (" 
                                         << pose.position.x << ", " 
                                         << pose.position.y << ", " 
-                                        << pose.position.z << ")";
-                    std::string position_text = oss.str();
+                                        << pose.position.z << ") ";
+                    std::string position_text = oss_1.str();
                     cv::putText(image, position_text, cv::Point(10, 80), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 0, 0), 1);
 
                     // RCLCPP_INFO(this->get_logger(), "Marker ID: %d - Translation: [Left Right inverted %f, Height inverted %f, Distance %f], Rotation: [%f, %f, %f]",

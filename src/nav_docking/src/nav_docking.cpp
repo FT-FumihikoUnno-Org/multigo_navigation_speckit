@@ -110,6 +110,7 @@ namespace nav_docking
     {
         RCLCPP_INFO(this->get_logger(), "Received a goal request with dock_request: %d", goal->dock_request);
 
+
         // Validate the goal
         if (goal->dock_request)
         {
@@ -281,11 +282,7 @@ namespace nav_docking
                     // Combine orientations
                     tf2::Quaternion marker_q(marker_rx, marker_ry, marker_rz, marker_rw);
                     tf2::Quaternion combined_q = camera_q * marker_q;  // Quaternion multiplication
-
-                    // 180-degree yaw adjustment
-                    tf2::Quaternion yaw_180_q;
-                    yaw_180_q.setRPY(0, 0, M_PI);  // Roll=0, Pitch=0, Yaw=180 degrees (π radians)
-                    tf2::Quaternion final_q = combined_q * yaw_180_q;  // First combined orientation, then yaw adjustment
+                    tf2::Quaternion final_q = combined_q; // First combined orientation, then yaw adjustment
                     tf2::Matrix3x3(final_q).getRPY(front_roll, front_pitch, front_yaw);
                 } // end of if for matching marker ids
             } // end of for loop
@@ -349,12 +346,9 @@ namespace nav_docking
                     // Combine orientations
                     tf2::Quaternion marker_q(marker_rx, marker_ry, marker_rz, marker_rw);
                     tf2::Quaternion combined_q = camera_q * marker_q;  // Quaternion multiplication
-
-                    // 180-degree yaw adjustment
-                    tf2::Quaternion yaw_180_q;
-                    yaw_180_q.setRPY(0, 0, M_PI);  // Roll=0, Pitch=0, Yaw=180 degrees (π radians)
-                    tf2::Quaternion final_q = combined_q * yaw_180_q;  // First combined orientation, then yaw adjustment
-                    tf2::Matrix3x3(final_q).getRPY(left_roll, left_pitch, left_yaw);
+                    tf2::Quaternion final_q = combined_q;  // First combined orientation, then yaw adjustment
+                    final_q.normalize();          
+                    tf2::Matrix3x3(final_q).getRPY(right_roll, right_pitch, left_yaw);
                 } // end of if for matching marker ids
             } // end of for loop
             // RCLCPP_INFO_STREAM(rclcpp::get_logger("nav_docking"), "frame ID: " << msg->header.frame_id);
@@ -416,11 +410,8 @@ namespace nav_docking
                     // Combine orientations
                     tf2::Quaternion marker_q(marker_rx, marker_ry, marker_rz, marker_rw);
                     tf2::Quaternion combined_q = camera_q * marker_q;  // Quaternion multiplication
-
-                    // 180-degree yaw adjustment
-                    tf2::Quaternion yaw_180_q;
-                    yaw_180_q.setRPY(0, 0, M_PI);  // Roll=0, Pitch=0, Yaw=180 degrees (π radians)
-                    tf2::Quaternion final_q = combined_q * yaw_180_q;  // First combined orientation, then yaw adjustment
+                    tf2::Quaternion final_q = combined_q; // First combined orientation, then yaw adjustment
+                    final_q.normalize();
                     tf2::Matrix3x3(final_q).getRPY(right_roll, right_pitch, right_yaw);
                 } // end of if for matching marker ids
             } // end of for loop
@@ -463,7 +454,8 @@ namespace nav_docking
             marker_z = left_transformed_marker_t.z();
             error_x = marker_x - aruco_distance_offset;
             error_y = marker_y - aruco_left_right_offset;
-            error_left_yaw = left_yaw;
+            error_left_yaw = -left_yaw;
+            // RCLCPP_INFO(this->get_logger(), "left_yaw: %f", error_left_yaw );
         }
         else 
         {
@@ -472,7 +464,8 @@ namespace nav_docking
             marker_z = right_transformed_marker_t.z();
             error_x = marker_x - aruco_distance_offset;
             error_y = marker_y + aruco_left_right_offset;
-            error_left_yaw = right_yaw;
+            error_left_yaw = -right_yaw;
+            // RCLCPP_INFO(this->get_logger(), "right_yaw: %f", error_left_yaw );
         }
 
         if ((callback_duration_left < marker_delay_threshold_sec || callback_duration_right < marker_delay_threshold_sec) &&

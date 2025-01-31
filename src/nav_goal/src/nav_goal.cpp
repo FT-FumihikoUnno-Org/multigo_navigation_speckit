@@ -219,11 +219,11 @@ namespace nav_goal
                     tf2::Quaternion marker_q(marker_rx, marker_ry, marker_rz, marker_rw);
                     tf2::Quaternion combined_q = camera_q * marker_q;  // Quaternion multiplication
 
-                    // 180-degree yaw adjustment
-                    tf2::Quaternion yaw_180_q;
-                    yaw_180_q.setRPY(0, 0, M_PI);  // Roll=0, Pitch=0, Yaw=180 degrees (π radians)
-
-                    tf2::Quaternion final_q = combined_q * yaw_180_q;  // First combined orientation, then yaw adjustment
+                    // // 180-degree yaw adjustment
+                    // tf2::Quaternion yaw_180_q;
+                    // yaw_180_q.setRPY(0, 0, M_PI);  // Roll=0, Pitch=0, Yaw=180 degrees (π radians)
+                    tf2::Quaternion final_q = combined_q;  // * yaw_180_q;  // First combined orientation, then yaw adjustment
+                    final_q.normalize();
                     goal_msg_right.pose.orientation.x = final_q.x();
                     goal_msg_right.pose.orientation.y = final_q.y();
                     goal_msg_right.pose.orientation.z = final_q.z();

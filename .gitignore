@@ -20,3 +20,7 @@ src/master
 src/boot
 src/multigo_launch
 
+src/HesaiLidar_ROS_2.0
+
+src/mecanum_drive
+

@@ -25,7 +25,7 @@ WHEEL_RADIUS = 0.0762
 CONSTANT = 33.5    # =320rpm/60s*2pi
 
 # ENABLE Comunicate the Phidgets Hub
-ON_LINE_HUB = False
+ON_LINE_HUB = True
 # ON_LINE_HUB = False     # for debug
 
 # ENABLE OR DISABLE CLOSED LOOP CONTROL

@@ -60,3 +60,9 @@ Robot:
     ros2 launch boot boot.launch.py 
     
     ros2 launch boot run.launch.py 
+
+## Remote Login Example
+    ssh -X USER @ IP_Address
+    source install/setup.bash
+    ros2 launch boot rviz_launch.py
+	

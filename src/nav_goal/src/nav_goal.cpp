@@ -104,8 +104,6 @@ namespace nav_goal
 
         Nav_goal::enable_callback = true;
         
-        
-
             // Provide feedback
 
 

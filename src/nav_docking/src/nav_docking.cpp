@@ -26,7 +26,6 @@ namespace nav_docking
         this->declare_parameter<float>("aruco_left_right_offset", 0);
         this->declare_parameter<float>("aruco_distance_offset_dual", 0);
         this->declare_parameter<float>("aruco_center_offset_dual", 0);
-
         this->declare_parameter<std::string>("marker_topic_left", marker_topic_left);
         this->declare_parameter<std::string>("marker_topic_right", marker_topic_right);
 
@@ -96,7 +95,7 @@ namespace nav_docking
         period,
         std::bind(&Nav_docking::frontMarkerCmdVelPublisher, this));
 
-        side_timer_ = this->create_wall_timer(
+        dual_timer_ = this->create_wall_timer(
         period,
         std::bind(&Nav_docking::dualMarkerCmdVelPublisher, this));
     }
@@ -147,11 +146,8 @@ namespace nav_docking
         stage_5_docking_status = false;
 
         Nav_docking::enable_callback = true;
-        
-        
 
             // Provide feedback
-
 
         while (stage_5_docking_status == false){
 
@@ -225,7 +221,6 @@ namespace nav_docking
         if (std::regex_search(frame_id, match, marker_id_regex) && match.size() > 1)
         {
             marker_id = std::stoi(match[1].str());
-            // RCLCPP_INFO(rclcpp::get_logger("MarkerIDLogger"), "Detected marker ID: %d", marker_id);
         }
         else
         {
@@ -250,8 +245,6 @@ namespace nav_docking
             for (int i = 0; i < msg->poses.size(); i++)
             {
                 found_aruco_marker_id_left = extractMarkerIds(msg->poses[i], msg->header.frame_id);  // Extract marker ID from frame
-                // RCLCPP_INFO(rclcpp::get_logger("MarkerIDLogger"), "Detected marker ID: %d", found_aruco_marker_id_left);
-                // RCLCPP_INFO(rclcpp::get_logger("MarkerIDLogger"), "desiredmarker ID: %d", desired_aruco_marker_id_left);
 
                 if (found_aruco_marker_id_left == desired_aruco_marker_id_left)  // Check if aruco makrer matches desired marker
                 {
@@ -288,7 +281,6 @@ namespace nav_docking
                     tf2::Matrix3x3(final_q).getRPY(right_roll, right_pitch, left_yaw);
                 } // end of if for matching marker ids
             } // end of for loop
-            // RCLCPP_INFO_STREAM(rclcpp::get_logger("nav_docking"), "frame ID: " << msg->header.frame_id);
         }  // end of try 
         catch (tf2::TransformException &ex)
         {
@@ -314,8 +306,6 @@ namespace nav_docking
             for (int i = 0; i < msg->poses.size(); i++)
             {
                 found_aruco_marker_id_right = extractMarkerIds(msg->poses[i], msg->header.frame_id);  // Extract marker ID from frame
-                // RCLCPP_INFO(rclcpp::get_logger("MarkerIDLogger"), "Detected marker ID: %d", found_aruco_marker_id_right);
-                // RCLCPP_INFO(rclcpp::get_logger("MarkerIDLogger"), "desiredmarker ID: %d", desired_aruco_marker_id_right);
 
                 if (found_aruco_marker_id_right == desired_aruco_marker_id_right)  // Check if aruco makrer matches desired marker
                 {
@@ -352,7 +342,6 @@ namespace nav_docking
                     tf2::Matrix3x3(final_q).getRPY(right_roll, right_pitch, right_yaw);
                 } // end of if for matching marker ids
             } // end of for loop
-            // RCLCPP_INFO_STREAM(rclcpp::get_logger("nav_docking"), "frame ID: " << msg->header.frame_id);
         }  // end of try
         catch (tf2::TransformException &ex)
         {
@@ -366,83 +355,95 @@ namespace nav_docking
     void Nav_docking::frontMarkerCmdVelPublisher()
     {
         if(Nav_docking::enable_callback == false) return;
-        rclcpp::Time current_time = this->now();
-        geometry_msgs::msg::Twist twist_msg;
-        double marker_x;
-        double marker_y;
-        double marker_z;
-        double error_x;
-        double error_y;
-        double error_left_yaw;
-        // Calculate dt as the duration since the last loop
-        rclcpp::Duration duration = current_time - marker_time_left;
-        callback_duration_left = duration.seconds();  // seconds as a double
-        duration = current_time - marker_time_right;
-        callback_duration_right = duration.seconds();  // seconds as a double
-        // RCLCPP_INFO(this->get_logger(), "front camera callback_duration: %f", callback_duration_left);
-
-        // Calculate the error
-
-        if (callback_duration_left < callback_duration_right)
+        if (stage_4_docking_status == false)
         {
-            marker_x = left_transformed_marker_t.x();
-            marker_y = left_transformed_marker_t.y();
-            marker_z = left_transformed_marker_t.z();
-            error_x = marker_x - aruco_distance_offset;
-            error_y = marker_y - aruco_left_right_offset;
-            error_left_yaw = left_yaw;
-        }
-        else 
-        {
-            marker_x = right_transformed_marker_t.x();
-            marker_y = right_transformed_marker_t.y();
-            marker_z = right_transformed_marker_t.z();
-            error_x = marker_x - aruco_distance_offset;
-            error_y = marker_y + aruco_left_right_offset;
-            error_left_yaw = right_yaw;
-        }
-        // // Right yaw 
-        // RCLCPP_WARN(this->get_logger(), "right_yaw: %f", right_yaw);
-        // // Left yaw
-        // RCLCPP_WARN(this->get_logger(), "left_yaw: %f", left_yaw);
+            rclcpp::Time current_time = this->now();
+            geometry_msgs::msg::Twist twist_msg;
+            double error_x;
+            double error_y;
+            double error_yaw;
+            // Calculate dt as the duration since the last loop
+            rclcpp::Duration duration_left = current_time - marker_time_left;
+            rclcpp::Duration duration_right = current_time - marker_time_right;
+            callback_duration_left = duration_left.seconds();  // seconds as a double
+            callback_duration_right = duration_right.seconds();  // seconds as a double
+            callback_duration = std::max(callback_duration_left, callback_duration_right);
 
-        if ((callback_duration_left < marker_delay_threshold_sec || callback_duration_right < marker_delay_threshold_sec) &&
-             stage_4_docking_status == false) // Check for marker delay and status
-        {
-            // RCLCPP_INFO(this->get_logger(), "callback_duration: %f", callback_duration_left);
-            // Use PID function to calculate controlled velocities
-            if (fabs(error_y) < docking_y_axis_threshold)  // Check if robot is alligned
+            // Calculate the error
+            if (callback_duration < marker_delay_threshold_sec)  // Use dual markers. 
             {
-                twist_msg.linear.x = calculate(error_x, prev_error_x,
-                                                kp_x, ki_x, kd_x, callback_duration_left, max_speed, min_speed, min_error);
-                twist_msg.linear.y = calculate(error_y, prev_error_y,
-                                                kp_y, ki_y, kd_y, callback_duration_left, max_speed, min_speed, min_error);
-                twist_msg.angular.z = calculate(error_left_yaw, prev_error_left_yaw,
-                                                kp_z, ki_z, kd_z, callback_duration_left, max_speed, min_speed, min_error);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "front transform x aruco_distance_offset: " << aruco_distance_offset);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "front transform x error #####: " << error_x);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "twist_pub:x " << twist_msg.linear.x);
+                double left_marker_x = left_transformed_marker_t.x();
+                double left_marker_y = left_transformed_marker_t.y();
+                double right_marker_x = right_transformed_marker_t.x();
+                double right_marker_y = right_transformed_marker_t.y();
+                double left_marker_z = left_transformed_marker_t.z();
+                double right_marker_z = right_transformed_marker_t.z();
+                double distance = (left_marker_x) + (right_marker_x) / 2;
+                double rotation = (right_marker_x - left_marker_x);
+                double center = (left_marker_y - -right_marker_y);
+                error_x = distance - aruco_distance_offset * 2;
+                error_y = center - aruco_center_offset_dual;
+                error_yaw = rotation;
             }
-            else  // align robot
+            else  // Use single marker
             {
-                twist_msg.linear.x = 0;
-                twist_msg.linear.y = calculate(error_y, prev_error_y,
-                                                kp_y, ki_y, kd_y, callback_duration_left, max_speed, min_speed, min_error);
-                twist_msg.angular.z = calculate(error_left_yaw, prev_error_left_yaw,
-                                                kp_z, ki_z, kd_z, callback_duration_left, max_speed, min_speed, min_error);
-
-                // RCLCPP_INFO_STREAM(this->get_logger(), "front transform y aruco_left_right_offset: " << aruco_left_right_offset);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "front transform y error #####: " << error_y);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "twist_pub:y " << twist_msg.linear.y );
+                if (callback_duration_left < callback_duration_right)  // Use left marker
+                {
+                    double marker_x = left_transformed_marker_t.x();
+                    double marker_y = left_transformed_marker_t.y();
+                    double marker_z = left_transformed_marker_t.z();
+                    error_x = marker_x - aruco_distance_offset;
+                    error_y = marker_y - aruco_left_right_offset;
+                    error_yaw = left_yaw;
+                    callback_duration = callback_duration_left;
+                }
+                else  // Use right marker
+                {
+                    double marker_x = right_transformed_marker_t.x();
+                    double marker_y = right_transformed_marker_t.y();
+                    double marker_z = right_transformed_marker_t.z();
+                    error_x = marker_x - aruco_distance_offset;
+                    error_y = marker_y + aruco_left_right_offset;
+                    error_yaw = right_yaw;
+                    callback_duration = callback_duration_right;
+                }
             }
 
-            // Publish twist if error is above threshold and set status
-            if (fabs(error_x) > min_error || fabs(error_y) > docking_y_axis_threshold || fabs(error_left_yaw > min_error/2))
+            if ((callback_duration < marker_delay_threshold_sec)) // Check for marker delay and status
             {
-                cmd_vel_pub->publish(twist_msg);
-                stage_4_docking_status = false;
-                // RCLCPP_INFO_STREAM(this->get_logger(), "Publish pub:x " << twist_msg.linear.x);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "Pubish pub:y " << twist_msg.linear.y);
+                // Use PID function to calculate controlled velocities
+                if (fabs(error_y) < docking_y_axis_threshold)  // Check if robot is alligned
+                {
+                    twist_msg.linear.x = calculate(error_x, prev_error_x,
+                                                    kp_x, ki_x, kd_x, callback_duration, max_speed, min_speed, min_error);
+                    twist_msg.linear.y = calculate(error_y, prev_error_y,
+                                                    kp_y, ki_y, kd_y, callback_duration, max_speed, min_speed, min_error);
+                    twist_msg.angular.z = calculate(error_yaw, prev_error_yaw,
+                                                    kp_z, ki_z, kd_z, callback_duration, max_speed, min_speed, min_error);
+                }
+                else  // align robot
+                {
+                    twist_msg.linear.x = 0;
+                    twist_msg.linear.y = calculate(error_y, prev_error_y,
+                                                    kp_y, ki_y, kd_y, callback_duration, max_speed, min_speed, min_error);
+                    twist_msg.angular.z = calculate(error_yaw, prev_error_yaw,
+                                                    kp_z, ki_z, kd_z, callback_duration, max_speed, min_speed, min_error);
+                }
+
+                // Publish twist if error is above threshold and set status
+                if (fabs(error_x) > min_error || fabs(error_y) > docking_y_axis_threshold || fabs(error_yaw > min_error/2))
+                {
+                    cmd_vel_pub->publish(twist_msg);
+                    stage_4_docking_status = false;
+                }
+                else
+                {
+                    twist_msg.linear.x = 0.0;
+                    twist_msg.linear.y = 0.0;
+                    twist_msg.angular.z = 0.0;
+                    cmd_vel_pub->publish(twist_msg);
+                    stage_4_docking_status = true;  // publish docking status
+                }
             }
             else
             {
@@ -450,122 +451,79 @@ namespace nav_docking
                 twist_msg.linear.y = 0.0;
                 twist_msg.angular.z = 0.0;
                 cmd_vel_pub->publish(twist_msg);
-                stage_4_docking_status = true;  // publish docking status
-                // RCLCPP_INFO_STREAM(this->get_logger(), "stage_4_docking_status true " << stage_4_docking_status);
             }
+            prev_error_x = error_x;
+            prev_error_y = error_y;
+            prev_error_yaw = error_yaw;
         }
-        else
-        {
-            twist_msg.linear.x = 0.0;
-            twist_msg.linear.y = 0.0;
-            twist_msg.angular.z = 0.0;
-            cmd_vel_pub->publish(twist_msg);
-            // RCLCPP_INFO_STREAM(this->get_logger(), "PAUSE 0 DELAY too long or status " << stage_4_docking_status);
-        }
-        prev_error_x = error_x;
-        prev_error_y = error_y;
-        prev_error_left_yaw = error_left_yaw;
     }
 
     void Nav_docking::dualMarkerCmdVelPublisher()
     {
         if(Nav_docking::enable_callback == false) return;
-        rclcpp::Time current_time = this->now();
-        geometry_msgs::msg::Twist twist_msg;
-        // Calculate dt as the duration since the last loop
-        rclcpp::Duration duration_left = current_time - marker_time_left;
-        rclcpp::Duration duration_right = current_time - marker_time_right;
-        callback_duration_side = std::max(duration_left.seconds(), duration_right.seconds());  // seconds as a double
-
-        if (callback_duration_side > docking_reset_threshold_sec)
-            stage_4_docking_status = false;
-
-        // RCLCPP_INFO(this->get_logger(), "side camera callback_duration: %f", callback_duration_side);
-        // RCLCPP_INFO_STREAM(this->get_logger(), "stage_4_docking_status: " << stage_4_docking_status);
-        // RCLCPP_INFO_STREAM(this->get_logger(), "kp_x: " << kp_x);
-
-        // Calculate the error
-        double left_marker_x = left_transformed_marker_t.x();
-        double left_marker_y = left_transformed_marker_t.y();
-        double right_marker_x = right_transformed_marker_t.x();
-        double right_marker_y = right_transformed_marker_t.y();
-        double left_marker_z = left_transformed_marker_t.z();
-        double right_marker_z = right_transformed_marker_t.z();
-        double distance = (left_marker_x) + (right_marker_x) / 2;
-        double rotation = (right_marker_x - left_marker_x);
-        double center =  (left_marker_y - -right_marker_y);
-        double error_dist = distance - aruco_distance_offset_dual; // distance - aruco_distance_offset_dual;
-        double error_center = center - aruco_center_offset_dual;
-        double error_rotation = rotation;
-
-        // Check for marker delay and status
-        if (callback_duration_side < marker_delay_threshold_sec && stage_4_docking_status == true)
+        if (stage_4_docking_status == true)
         {
-            // Use PID function to calculate controlled velocities
-            if (fabs(error_dist) > min_docking_error ||
-                fabs(error_center) > min_error || 
-                fabs(error_rotation) > min_docking_error)
+            rclcpp::Time current_time = this->now();
+            geometry_msgs::msg::Twist twist_msg;
+            // Calculate dt as the duration since the last loop
+            rclcpp::Duration duration_left = current_time - marker_time_left;
+            rclcpp::Duration duration_right = current_time - marker_time_right;
+            callback_duration_dual = std::max(duration_left.seconds(), duration_right.seconds());  // seconds as a double
+
+            if (callback_duration_dual > docking_reset_threshold_sec)
+                stage_4_docking_status = false;
+
+            // Calculate the error
+            double left_marker_x = left_transformed_marker_t.x();
+            double left_marker_y = left_transformed_marker_t.y();
+            double right_marker_x = right_transformed_marker_t.x();
+            double right_marker_y = right_transformed_marker_t.y();
+            double left_marker_z = left_transformed_marker_t.z();
+            double right_marker_z = right_transformed_marker_t.z();
+            double distance = (left_marker_x) + (right_marker_x) / 2;
+            double rotation = (right_marker_x - left_marker_x);
+            double center =  (left_marker_y - -right_marker_y);
+            double error_dist = distance - aruco_distance_offset_dual; // distance - aruco_distance_offset_dual;
+            double error_center = center - aruco_center_offset_dual;
+            double error_rotation = rotation;
+
+            // Check for marker delay and status
+            if (callback_duration_dual < marker_delay_threshold_sec)
             {
-                twist_msg.linear.x = calculate(error_dist, prev_error_dist,
-                                                kp_x, ki_x, kd_x, callback_duration_side, max_speed, min_speed, min_docking_error);
-                twist_msg.linear.y = calculate(error_center, prev_error_center,
-                                                kp_y, ki_y, kd_y, callback_duration_side, max_speed/2, min_speed/2, min_error);
-                twist_msg.angular.z = calculate( error_rotation, prev_error_rotation,
-                                                kp_z, ki_z, kd_z, callback_duration_side, max_speed, min_speed, min_docking_error);
-                cmd_vel_pub->publish(twist_msg);
-                stage_5_docking_status = false;
-
-                // RCLCPP_INFO_STREAM(this->get_logger(), "side transform dist aruco_distance_offset_side: " << aruco_distance_offset_dual);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "side transform error_center #####: " << error_center);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_rotation #####: " << error_rotation);
-
-                // RCLCPP_INFO_STREAM(this->get_logger(), "twist_pub:y: " << twist_msg.linear.y);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:anglular Z: " << twist_msg.angular.z);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_x: " << right_marker_x);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_x: " << left_marker_x);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_center #####: " << error_center);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:y: " << twist_msg.linear.y);
-
-                // RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_y: " << right_marker_y);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_y: " << left_marker_y);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_z: " << right_marker_z);
-                // RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_z: " << left_marker_z);
-            }
-            else
-            {
-                twist_msg.linear.x = 0.0;
-                twist_msg.linear.y = 0.0;
-                twist_msg.angular.z = 0.0;
-                cmd_vel_pub->publish(twist_msg);
-                stage_5_docking_status = true;  // publish docking status
-                // RCLCPP_INFO_STREAM(this->get_logger(), "DOCKING COMPLETE" << "error_dist: " << error_dist << 
-                //                                                             "error_center: " << error_center);
+                // Use PID function to calculate controlled velocities
+                if (fabs(error_dist) > min_docking_error ||
+                    fabs(error_center) > min_error || 
+                    fabs(error_rotation) > min_docking_error)
+                {
+                    twist_msg.linear.x = calculate(error_dist, prev_error_dist,
+                                                    kp_x, ki_x, kd_x, callback_duration_dual, max_speed, min_speed, min_docking_error);
+                    twist_msg.linear.y = calculate(error_center, prev_error_center,
+                                                    kp_y, ki_y, kd_y, callback_duration_dual, max_speed/2, min_speed/2, min_error);
+                    twist_msg.angular.z = calculate( error_rotation, prev_error_rotation,
+                                                    kp_z, ki_z, kd_z, callback_duration_dual, max_speed, min_speed, min_docking_error);
+                    cmd_vel_pub->publish(twist_msg);
+                    stage_5_docking_status = false;
+                }
+                else
+                {
+                    twist_msg.linear.x = 0.0;
+                    twist_msg.linear.y = 0.0;
+                    twist_msg.angular.z = 0.0;
+                    cmd_vel_pub->publish(twist_msg);
+                    stage_5_docking_status = true;  // publish docking status
+                }
             }
 
-        // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
-        // RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:x: " << twist_msg.linear.x);
-        // RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_y: " << (left_marker_y - aruco_distance_offset_dual));
-        // RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_y: " << (-right_marker_y - aruco_distance_offset_dual));
-        // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_dist #####: " << error_dist);
+            if (stage_5_docking_status == true)
+            {
+                RCLCPP_INFO_STREAM(this->get_logger(), "------- DOCKING COMPLETE ------");
+                cmd_vel_pub->publish(twist_msg);
+            }
+            // Update previous error values
+            prev_error_dist = error_dist;
+            prev_error_center = error_center;
+            prev_error_rotation = error_rotation;
         }
-        if (stage_5_docking_status == true)
-        {
-            // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
-            // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform center error #####: " << error_center);
-            // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform rotation error #####: " << error_rotation);
-            // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
-            // RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:x: " << twist_msg.linear.x);
-            // RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_y: " << (left_marker_y - aruco_distance_offset_dual));
-            // RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_y: " << (-right_marker_y - aruco_distance_offset_dual));
-            // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_dist #####: " << error_dist);
-
-            RCLCPP_INFO_STREAM(this->get_logger(), "------- DOCKING COMPLETE ------");
-            cmd_vel_pub->publish(twist_msg);
-        }
-        prev_error_dist = error_dist;
-        prev_error_center = error_center;
-        prev_error_rotation = error_rotation;
     }
 } // namespace nav_docking
 

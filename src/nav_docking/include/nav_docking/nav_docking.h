@@ -72,7 +72,7 @@ namespace nav_docking
         bool stage_6_docking_status=false;
 
         rclcpp::TimerBase::SharedPtr front_timer_;
-        rclcpp::TimerBase::SharedPtr side_timer_;
+        rclcpp::TimerBase::SharedPtr dual_timer_;
         
 
         std::string base_frame = "base_link";
@@ -84,14 +84,14 @@ namespace nav_docking
         // front marker offset
         float aruco_distance_offset;
         float aruco_left_right_offset;
-        // side markers offset
+        // dual markers offset
         float aruco_distance_offset_dual;
         float aruco_center_offset_dual;
 
         int desired_aruco_marker_id_left;
         int desired_aruco_marker_id_right;
 
-        float docking_y_axis_threshold = 0.015;
+        float docking_y_axis_threshold = 0.005;
 
         // Marker variables
         tf2::Vector3 left_transformed_marker_t;
@@ -109,7 +109,7 @@ namespace nav_docking
         // Initialize integral and previous error terms for x and y
         double prev_error_x = 0.0;
         double prev_error_y = 0.0;
-        double prev_error_left_yaw = 0.0;
+        double prev_error_yaw = 0.0;
 
         double prev_error_dist;
         double prev_error_center;
@@ -117,9 +117,10 @@ namespace nav_docking
 
         rclcpp::Time marker_time_left = this->now();
         rclcpp::Time marker_time_right = this->now();
+        double callback_duration; // loop time
         double callback_duration_left; // loop time
         double callback_duration_right; // loop time
-        double callback_duration_side; // loop time
+        double callback_duration_dual; // loop time
         double min_error = 0.002; // min error of 2mm
         double min_docking_error = 0.001; // min error of 0.2mm
         double previous_error_center;

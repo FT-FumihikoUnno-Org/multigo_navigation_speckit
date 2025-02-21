@@ -1,0 +1,29 @@
+camera_matrix:
+  cols: 3
+  data:
+  - 1178.0546183839526
+  - 0.0
+  - 607.1274777120606
+  - 0.0
+  - 1182.9802872579437
+  - 402.8202581538555
+  - 0.0
+  - 0.0
+  - 1.0
+  rows: 3
+camera_name: usb_cam
+distortion_coefficients:
+  cols: 5
+  data:
+  - 0.2611882511435169
+  - -0.3777417913965769
+  - -0.0030545584009786485
+  - -0.008446111881396557
+  - 0.4735330934619528
+  rows: 1
+frame_id: camera_left_frame
+image_height: 720
+image_width: 1280
+
+# image_height: 600
+# image_width: 800

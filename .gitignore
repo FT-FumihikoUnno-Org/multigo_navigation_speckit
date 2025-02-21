@@ -1,0 +1,26 @@
+# Ignore log files
+*.log
+log
+
+# Ignore VSCode settings
+.vscode/
+
+# Ignore build file
+build
+install
+__pycache__
+
+# Ignore map updates
+src/boot/maps/rtabmap.db
+
+# Ignore different repositories
+src/mg_master
+src/master
+
+src/boot
+src/multigo_launch
+
+src/HesaiLidar_ROS_2.0
+
+src/mecanum_drive
+

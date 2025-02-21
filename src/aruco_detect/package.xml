@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>aruco_detect</name>
+  <version>0.0.0</version>
+  <description>Aruco marker detection using OpenCV and ROS 2</description>
+  <maintainer email="thomas.vines.gc@futu-re.co.jp">thomas.vines</maintainer>
+  <license>TODO: License declaration</license>
+
+  <!-- Build tool dependencies -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Runtime dependencies -->
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>cv_bridge</depend>  <!-- Added cv_bridge dependency -->
+  <depend>opencv</depend>  <!-- Added OpenCV dependency -->
+
+  <!-- Testing dependencies -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <!-- Export the build type -->
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

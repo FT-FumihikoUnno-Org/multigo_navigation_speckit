@@ -1,14 +1,14 @@
 nav_docking_node:
   ros__parameters:
     pid_parameters:
-      kp_x: 0.501   # proportional gain for x-direction
-      ki_x: 0.02   # Integral gain
-      kd_x: 0.1  # derivative gain
+      kp_x: 1.0   # proportional gain for x-direction 0.6
+      ki_x: 1.0   # Integral gain
+      kd_x: 0.2  # derivative gain
 
-      kp_y: 0.04   # proportional gain for y-direction
-      ki_y: 0.02   # Integral gain
+      kp_y: 1.0   # proportional gain for y-direction 0.28
+      ki_y: 3.8   # Integral gain
       kd_y: 0.03  # Small derivative gain to handle sudden changes
 
-      kp_z: 0.25   # proportional gain for angular control
-      ki_z: 0.05   # Integral gain
-      kd_z: 1.55  # derivative
+      kp_z: 10.00   # proportional gain for angular control 1.65
+      ki_z: 10.6   # Integral gain
+      kd_z: 0.05  # derivative

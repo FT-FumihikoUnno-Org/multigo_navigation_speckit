@@ -30,7 +30,7 @@ ON_LINE_HUB = True
 
 # ENABLE OR DISABLE CLOSED LOOP CONTROL
 # CLOSED_LOOP = True
-CLOSED_LOOP = False
+CLOSED_LOOP = True
 
 # ENABLE OR DISABLE REAL SPEED PUBLISH
 REAL_SPEED_PUBLISH = True
@@ -38,7 +38,7 @@ REAL_SPEED_PUBLISH = True
 
 # PID RELATED FLAG
 ENABLE_I = True
-ENABLE_D = False
+ENABLE_D = True
 
 # DRIVE MODE
 STAND_ALONE = 0
@@ -94,8 +94,8 @@ class ControlLoopPid:
         self.last_real_wheel_vel = np.array([0.0, 0.0, 0.0, 0.0])
 
         self.kp = 0.2
-        self.ki = 2.4
-        self.kd = 0.0
+        self.ki = 4.2
+        self.kd = 0.1
         pass
 
     def compute_pid(self, real_wheel_vel, cmd_wheel_vel, dt):
@@ -177,13 +177,13 @@ class ControlLoop(Node):
         super().__init__('phidgets_control')
         self.get_logger().info("Initializing Phidgets Motor Controller...")
 
-        self.subscriber_cmd_vel = self.create_subscription(Twist, '/cmd_vel', self.callback, 10)
+        self.subscriber_cmd_vel = self.create_subscription(Twist, '/cmd_vel', self.callback, 0)
         self.linear_velocity = None
         self.angular_velocity = None
         self.dt = 0.0
         self.dt_old = None
 
-        self.publisher_real_vel = self.create_publisher(Twist, '/real_vel', 10)
+        self.publisher_real_vel = self.create_publisher(Twist, '/real_vel', 0)
 
         self.timer = self.create_timer(TimerPeriod, self.timer_callback)
         # self.i = 0
@@ -278,6 +278,7 @@ class ControlLoop(Node):
                                                                         self.dt)
             else:
                 cmd_vel = cmd_wheels_vel
+                print("CMD VEL \n" , cmd_vel)
             # We send the new cmd to the motor controllers.
             if ON_LINE_HUB:
                 lf_motor.setTargetVelocity(cmd_vel[0])

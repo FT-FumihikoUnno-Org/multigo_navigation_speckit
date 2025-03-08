@@ -487,7 +487,6 @@ namespace nav_docking
             rclcpp::Duration duration_left = current_time - marker_time_left;
             rclcpp::Duration duration_right = current_time - marker_time_right;
             callback_duration_dual = std::max(duration_left.seconds(), duration_right.seconds());  // seconds as a double
-            double min_docking_yaw_error = min_docking_error / 2;
 
             if (callback_duration_dual > docking_reset_threshold_sec)
                 stage_4_docking_status = false;
@@ -516,15 +515,15 @@ namespace nav_docking
             {
                 // Use PID function to calculate controlled velocities
                 if (fabs(error_dist) > min_docking_error ||
-                    fabs(error_center) > min_docking_error ||
-                    fabs(error_rotation) > min_docking_yaw_error)
+                    fabs(error_center) > min_docking_error||
+                    fabs(error_rotation) > min_docking_error)
                 {
                     twist_msg.linear.x = calculate(error_dist, prev_error_dist,
                                                     kp_x, ki_x, kd_x, callback_duration_dual, max_speed, min_speed, min_docking_error);
                     twist_msg.linear.y = calculate(error_center, prev_error_center,
                                                     kp_y, ki_y, kd_y, callback_duration_dual, max_speed, min_speed, min_docking_error);
                     twist_msg.angular.z = calculate( error_rotation, prev_error_rotation,
-                                                    kp_z, ki_z, kd_z, callback_duration_dual, max_speed, min_speed, min_docking_yaw_error);
+                                                    kp_z, ki_z, kd_z, callback_duration_dual, max_speed, min_speed, min_docking_error);
                     cmd_vel_pub->publish(twist_msg);
                     stage_5_docking_status = false;
                     confirmed_docking_status=false;  // Make false since out of spec

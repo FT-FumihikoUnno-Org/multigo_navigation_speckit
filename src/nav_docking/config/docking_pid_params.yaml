@@ -9,6 +9,6 @@ nav_docking_node:
       ki_y: 3.8   # Integral gain
       kd_y: 0.03  # Small derivative gain to handle sudden changes
 
-      kp_z: 10.00   # proportional gain for angular control 1.65
-      ki_z: 10.6   # Integral gain
+      kp_z: 1.0   # proportional gain for angular control 1.65
+      ki_z: 3.6   # Integral gain
       kd_z: 0.05  # derivative

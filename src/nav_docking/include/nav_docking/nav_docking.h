@@ -127,7 +127,9 @@ namespace nav_docking
         double callback_duration_right; // loop time
         double callback_duration_dual; // loop time
         double min_error = 0.01; // min error of 1cm
+        double min_y_error = min_error * 3;
         double min_docking_error = 0.001; // min error of 1mm
+        double min_y_docking_error = min_docking_error * 3;
         double previous_error_center;
     };
 

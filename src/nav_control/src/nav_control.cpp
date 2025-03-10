@@ -8,7 +8,7 @@ namespace nav_control
         // Declare node parameters
         this->declare_parameter<std::string>("input_topic", "input_topic");
         this->declare_parameter<std::string>("output_topic", "output_topic");
-        this->declare_parameter<std::string>("mode_drive", "COMBINE_CHAIR");
+        this->declare_parameter<std::string>("mode_drive", "DOCKING");
         this->declare_parameter<float>("LENGTH_ROTATION_CENTER_SOLO", 0.0);
         this->declare_parameter<float>("LENGTH_ROTATION_CENTER_DOCKING", 0.25);
         this->declare_parameter<float>("LENGTH_ROTATION_CENTER_COMBINE_CHAIR", 0.5);

@@ -420,19 +420,19 @@ namespace nav_docking
                     callback_duration = callback_duration_right;
                     // RCLCPP_WARN_STREAM(this->get_logger(), "Error X dual stage 4 "<<  error_x);
                     // RCLCPP_WARN_STREAM(this->get_logger(), "Error Y  dual stage 4 "<<  error_y);
-                    // RCLCPP_WARN_STREAM(this->get_logger(), "Error yaw dual stage 4 "<<  error_yaw);
+                    RCLCPP_WARN_STREAM(this->get_logger(), "Error yaw dual stage 4 "<<  error_yaw);
                 }
             }
             
             if ((callback_duration < marker_delay_threshold_sec)) // Check for marker delay and status
             {
                 // Use PID function to calculate controlled velocities
-                if (fabs(error_y) < min_error)  // Check if robot is alligned
+                if (fabs(error_y) < min_y_error)  // Check if robot is alligned
                 {
                     twist_msg.linear.x = calculate(error_x, prev_error_x,
                                                     kp_x, ki_x, kd_x, callback_duration, max_speed, min_speed, min_error);
                     twist_msg.linear.y = calculate(error_y, prev_error_y,
-                                                    kp_y, ki_y, kd_y, callback_duration, max_speed, min_speed, min_error);
+                                                    kp_y, ki_y, kd_y, callback_duration, max_speed, min_speed, min_y_error);
                     twist_msg.angular.z = calculate(error_yaw, prev_error_yaw,
                                                     kp_z, ki_z, kd_z, callback_duration, max_speed, min_speed, min_error);
                 }
@@ -440,13 +440,13 @@ namespace nav_docking
                 {
                     twist_msg.linear.x = 0;
                     twist_msg.linear.y = calculate(error_y, prev_error_y,
-                                                    kp_y, ki_y, kd_y, callback_duration, max_speed, min_speed, min_error);
+                                                    kp_y, ki_y, kd_y, callback_duration, max_speed, min_speed, min_y_error);
                     twist_msg.angular.z = calculate(error_yaw, prev_error_yaw,
                                                     kp_z, ki_z, kd_z, callback_duration, max_speed, min_speed, min_error); 
                 }
 
                 // Publish twist if error is above threshold and set status
-                if (fabs(error_x) > min_error || fabs(error_y) > min_error || fabs(error_yaw > min_error))
+                if (fabs(error_x) > min_error || fabs(error_y) > min_y_error || fabs(error_yaw > min_error))
                 {
                     cmd_vel_pub->publish(twist_msg);
                     stage_4_docking_status = false;
@@ -508,20 +508,20 @@ namespace nav_docking
 
             // RCLCPP_WARN_STREAM(this->get_logger(), "Error dist dual stage 5"<<  error_dist);
             // RCLCPP_WARN_STREAM(this->get_logger(), "Error center dual stage 5"<<  error_center);
-            // RCLCPP_WARN_STREAM(this->get_logger(), "Error rotation dual stage 5"<<  error_rotation);
+            RCLCPP_WARN_STREAM(this->get_logger(), "Error rotation dual stage 5"<<  error_rotation);
 
             // Check for marker delay and status
             if (callback_duration_dual < marker_delay_threshold_sec)
             {
                 // Use PID function to calculate controlled velocities
                 if (fabs(error_dist) > min_docking_error ||
-                    fabs(error_center) > min_docking_error||
+                    fabs(error_center) > min_y_docking_error||
                     fabs(error_rotation) > min_docking_error)
                 {
                     twist_msg.linear.x = calculate(error_dist, prev_error_dist,
                                                     kp_x, ki_x, kd_x, callback_duration_dual, max_speed, min_speed, min_docking_error);
                     twist_msg.linear.y = calculate(error_center, prev_error_center,
-                                                    kp_y, ki_y, kd_y, callback_duration_dual, max_speed, min_speed, min_docking_error);
+                                                    kp_y, ki_y, kd_y, callback_duration_dual, max_speed, min_speed, min_y_docking_error);
                     twist_msg.angular.z = calculate( error_rotation, prev_error_rotation,
                                                     kp_z, ki_z, kd_z, callback_duration_dual, max_speed, min_speed, min_docking_error);
                     cmd_vel_pub->publish(twist_msg);

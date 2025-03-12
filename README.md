@@ -83,7 +83,7 @@ Open a new terminal window and run these commands:
 ### Cloning Packages
 Open a new terminal window and run these commands:
 
-    git clone --recurse-submodules -b dev/okinawa_docking_test https://github.com/Futu-reADS/multigo_navigation.git
+    git clone --recurse-submodules -b develop https://github.com/Futu-reADS/multigo_navigation.git
     cd multigo_navigation
     vcs import src < multigo.repos --recursive
     vcs pull src

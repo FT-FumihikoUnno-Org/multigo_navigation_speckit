@@ -10,8 +10,8 @@ namespace nav_control
         this->declare_parameter<std::string>("output_topic", "output_topic");
         this->declare_parameter<std::string>("mode_drive", "DOCKING");
         this->declare_parameter<float>("LENGTH_ROTATION_CENTER_SOLO", 0.0);
-        this->declare_parameter<float>("LENGTH_ROTATION_CENTER_DOCKING", 0.25);
-        this->declare_parameter<float>("LENGTH_ROTATION_CENTER_COMBINE_CHAIR", 0.5);
+        this->declare_parameter<float>("LENGTH_ROTATION_CENTER_DOCKING", 0.15);
+        this->declare_parameter<float>("LENGTH_ROTATION_CENTER_COMBINE_CHAIR", 0.3);
         // Retrieve parameter values
         this->get_parameter("input_topic", input_topic);
         this->get_parameter("output_topic", output_topic);

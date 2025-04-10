@@ -21,7 +21,9 @@ public:
 
 private:
     // Declare parameters
-    float min_x_, max_x_, min_y_, max_y_, min_z_, max_z_;
+    float inner_min_x_, inner_max_x_, inner_min_y_, inner_max_y_, inner_min_z_, inner_max_z_;
+    float outer_min_x_, outer_max_x_, outer_min_y_, outer_max_y_, outer_min_z_, outer_max_z_;
+
     bool keep_organized_, negative_;
     std::string input_frame_, output_frame_, input_topic, output_topic;
 

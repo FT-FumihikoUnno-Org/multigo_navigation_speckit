@@ -6,7 +6,7 @@ repositories:
  boot:
     type: git
     url: git@github.com:Futu-reADS/multigo_launch.git
-    version: develop
+    version: feature/localization
  mecanum_drive:
     type: git
     url: git@github.com:Futu-reADS/mecanum_drive.git

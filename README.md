@@ -78,6 +78,7 @@ Open a new terminal window and run these commands:
  	sudo apt-get install ros-humble-pcl-ros
  	sudo apt install ros-humble-rtabmap-slam
  	sudo apt install ros-humble-pointcloud-to-laserscan
+  	sudo apt install ros-humble-laser-filters
 	sudo apt update
 
 ### Cloning Packages

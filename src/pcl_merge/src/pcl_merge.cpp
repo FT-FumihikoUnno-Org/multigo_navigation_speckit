@@ -45,12 +45,12 @@ void PCLMergeNode::cloud_callback(size_t index, const sensor_msgs::msg::PointClo
 
     // Get transform from input frame to output frame
     geometry_msgs::msg::TransformStamped transform;
-    try {
+    try 
+    {
         transform = tf_buffer_->lookupTransform(output_frame_, msg->header.frame_id, rclcpp::Time(0));
-
-
-
-    } catch (tf2::TransformException &ex) {
+    }
+    catch (tf2::TransformException &ex) 
+    {
         RCLCPP_WARN(this->get_logger(), "Could not transform point cloud [%zu]: %s", index, ex.what());
         return;
     }
@@ -60,10 +60,13 @@ void PCLMergeNode::cloud_callback(size_t index, const sensor_msgs::msg::PointClo
     bool conversion_success = false;
 
     // First, try to convert directly (works if the message already contains an intensity field)
-    try {
+    try 
+    {
         pcl::fromROSMsg(*msg, *pcl_cloud);
         conversion_success = true;
-    } catch (std::exception &e) {
+    } 
+    catch (std::exception &e) 
+    {
         // If the conversion fails, it might be because the cloud contains RGB fields.
         RCLCPP_DEBUG(this->get_logger(), "Direct conversion to PointXYZI failed, trying PointXYZRGB: %s", e.what());
     }
@@ -98,9 +101,12 @@ void PCLMergeNode::cloud_callback(size_t index, const sensor_msgs::msg::PointClo
 
     // Now transform the point cloud to the output frame
     pcl::PointCloud<pcl::PointXYZI>::Ptr pcl_cloud_transformed(new pcl::PointCloud<pcl::PointXYZI>);
-    try {
+    try 
+    {
         pcl_ros::transformPointCloud(*pcl_cloud, *pcl_cloud_transformed, transform);
-    } catch (std::exception &ex) {
+    } 
+    catch (std::exception &ex) 
+    {
         RCLCPP_WARN(this->get_logger(), "Error during transform: %s", ex.what());
         return;
     }

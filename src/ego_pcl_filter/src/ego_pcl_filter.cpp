@@ -3,19 +3,19 @@
 CropBoxFilterNode::CropBoxFilterNode() : Node("crop_box_filter_node")
 {
     // Declare parameters
-    this->declare_parameter("inner_min_x", -0.20);
-    this->declare_parameter("inner_max_x", 0.20);
-    this->declare_parameter("inner_min_y", -0.15);
-    this->declare_parameter("inner_max_y", 0.15);
-    this->declare_parameter("inner_min_z", -0.3);
-    this->declare_parameter("inner_max_z", 1.5);
+    this->declare_parameter("inner_min_x", -0.0);
+    this->declare_parameter("inner_max_x", 0.0);
+    this->declare_parameter("inner_min_y", -0.0);
+    this->declare_parameter("inner_max_y", 0.0);
+    this->declare_parameter("inner_min_z", -0.0);
+    this->declare_parameter("inner_max_z", 0.0);
 
     this->declare_parameter("outer_min_x", -50.0);
     this->declare_parameter("outer_max_x", 50.0);
     this->declare_parameter("outer_min_y", 50.0);
     this->declare_parameter("outer_max_y", 50.0);
-    this->declare_parameter("outer_min_z", 0.1);
-    this->declare_parameter("outer_max_z", 1.5);
+    this->declare_parameter("outer_min_z", 0.0);
+    this->declare_parameter("outer_max_z", 5.5);
 
     this->declare_parameter("keep_organized", false);
     this->declare_parameter("negative", true);
@@ -92,7 +92,6 @@ void CropBoxFilterNode::pointCloudCallback(const sensor_msgs::msg::PointCloud2::
     crop_box_filter.setMax(Eigen::Vector4f(inner_max_x_, inner_max_y_, inner_max_z_, 1.0));
     crop_box_filter.setNegative(negative_);
     crop_box_filter.setKeepOrganized(keep_organized_);
-
 
     crop_box_filter.setInputCloud(cloud);
     crop_box_filter.filter(*ego_filtered_cloud);

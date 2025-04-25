@@ -84,6 +84,7 @@ Open a new terminal window and run these commands:
 ### Cloning Packages
 Open a new terminal window and run these commands:
 
+    git config --global submodule.recurse true
     git clone --recurse-submodules -b feature/localization https://github.com/Futu-reADS/multigo_navigation.git
     cd multigo_navigation
     vcs import src < multigo.repos --recursive

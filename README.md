@@ -70,14 +70,12 @@ If all of the prerequisites have been installed properly, Gazebo and RVIZ would 
 Open a new terminal window and run these commands:
 
 	sudo apt update
-	sudo apt install ros-humble-pcl-msgs python3-pip
- 	~~sudo apt install ros-humble-pcl-conversions~~
-	sudo apt install ros-humble-stereo-msgs ros-humble-ament-lint-auto ros-humble-image-geometry
+	sudo apt install ros-humble-pcl-conversions ros-humble-pcl-msgs python3-pip
 	pip3 install pyyaml
  	pip install pyserial
 	sudo apt install python3-serial
 	sudo apt install ros-$ROS_DISTRO-rtabmap-ros
- 	~~sudo apt-get install ros-humble-pcl-ros~~
+ 	sudo apt-get install ros-humble-pcl-ros
  	sudo apt install ros-humble-rtabmap-slam
  	sudo apt install ros-humble-pointcloud-to-laserscan
   	sudo apt install ros-humble-laser-filters

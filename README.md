@@ -32,6 +32,7 @@ Reload or open a new terminal.
 
 #### ~~Install TurtleBot3 Packages~~ 
 Note: These commands are no longer needed as the previous command is a one line install command. 
+
     mkdir -p ~/turtlebot3_ws/src
     cd ~/turtlebot3_ws/src/
     git clone -b humble https://github.com/ROBOTIS-GIT/DynamixelSDK.git

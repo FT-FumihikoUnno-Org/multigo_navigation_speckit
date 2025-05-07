@@ -23,17 +23,14 @@ Run:
 Reload or open a new terminal.
 
 ### Installing Gazebo
-    sudo apt install ros-humble-gazebo-*
-    sudo apt install ros-humble-gazebo-ros-pkgs
-    sudo apt install ros-humble-gazebo-ros
+    sudo apt install ros-humble-gazebo-* ros-humble-gazebo-ros-pkgs ros-humble-gazebo-ros
 
 ### Installing NAV2
-    sudo apt install ros-humble-cartographer
-    sudo apt install ros-humble-cartographer-ros
-    sudo apt install ros-humble-navigation2
-    sudo apt install ros-humble-nav2-bringup
+    sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup ros-$ROS_DISTRO-turtlebot3*
+    ~~sudo apt install ros-humble-cartographer~~
+    ~~sudo apt install ros-humble-cartographer-ros~~
 
-#### Install TurtleBot3 Packages
+#### ~~Install TurtleBot3 Packages~~
     mkdir -p ~/turtlebot3_ws/src
     cd ~/turtlebot3_ws/src/
     git clone -b humble https://github.com/ROBOTIS-GIT/DynamixelSDK.git

@@ -91,7 +91,8 @@ Open a new terminal window and run these commands:
     cd multigo_navigation
     rosdep update
     rosdep install --from-paths src --ignore-src -r -y
-    colcon build --symlink-install
+    colcon build --symlink-install --cmake-args -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+
 
 
 Close all terminals and reopen them for the following:

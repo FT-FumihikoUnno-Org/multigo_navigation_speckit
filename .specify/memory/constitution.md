@@ -1,50 +1,46 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+
+- Version change: 1.0.0 → 1.1.0
+- Modified principles: none
+- Added sections:
+    - Principle VI: Bilingual Documentation (English & Japanese)
+- Removed sections: none
+- Templates requiring updates:
+    - ✅ .specify/templates/plan-template.md
+    - ✅ .specify/templates/spec-template.md
+    - ✅ .specify/templates/tasks-template.md
+- Follow-up TODOs:
+    - TODO(RATIFICATION_DATE): Confirm the original ratification date.
+-->
+# MultiGo Navigation SpecKit Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. ROS2-Native Development
+All packages must be valid ROS2 packages, including `package.xml` and `CMakeLists.txt` or `setup.py`. Code should utilize ROS2 client libraries for communication, parameters, and lifecycle management.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Clear Separation of Concerns
+Each package should have a single, well-defined responsibility (e.g., perception, control, navigation). This promotes modularity, testability, and reuse.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Configuration-Driven Behavior
+Node behavior must be configurable at runtime via ROS2 parameters. Default parameters should be provided in a `config` directory within the package.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Composition via Launch Files
+Complex applications should be built by composing nodes using ROS2 launch files. Launch files are the standard for running and integrating packages.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Test-Driven Development (TDD)
+All packages must include a `test` directory with unit and/or integration tests. New features or bug fixes must be accompanied by corresponding tests.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### VI. Bilingual Documentation (English & Japanese)
+All user-facing documentation, including READMEs and specifications, must be available in both English and Japanese. This can be achieved by having both languages in a single file or by maintaining a pair of files (e.g., `README.md` and `README.jp.md`).
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Development Workflow
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+All code changes must be submitted via pull requests and require at least one approval from a designated reviewer. All tests must pass before a change is merged.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution is the supreme governing document for this project. All development practices, tools, and artifacts must comply with its principles. Amendments to this constitution require a proposal, review, and a documented migration plan if the changes are not backward-compatible.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.1.0 | **Ratified**: TODO(RATIFICATION_DATE): Confirm the original ratification date | **Last Amended**: 2025-12-16

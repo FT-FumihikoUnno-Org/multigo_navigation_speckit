@@ -28,12 +28,13 @@ The "Multi-Go" system requires a centralized and user-friendly interface for man
 - **Scenario 1: User Authentication / シナリオ1: ユーザー認証**
   - **Actor / アクター**: Administrator, Nurse, Caregiver / 管理者、看護士、介護士
   - **Pre-conditions / 事前条件**: The user has valid credentials. / ユーザーが有効な資格情報を持っていること。
-  - **Flow / フロー**:
+  - Flow / フロー**:
     1. The user navigates to the web application URL. / ユーザーがWebアプリケーションのURLにアクセスします。
-    2. The application presents a login screen. / アプリケーションがログイン画面を表示します。
-    3. The user enters their credentials and submits the form. / ユーザーが資格情報を入力し、フォームを送信します。
-    4. The system validates the credentials, establishes a session, and identifies the user's role. / システムが資格情報を検証し、セッションを確立し、ユーザーのロールを識別します。
-    5. The user is redirected to their role-specific dashboard. / ユーザーが自分のロール専用のダッシュボードにリダイレクトされます。
+    2. The application presents a login button, initiating the OpenID Connect flow. / アプリケーションがログインボタンを表示し、OpenID Connectフローを開始します。
+    3. The user is redirected to the Identity Provider (e.g., Google, Auth0) to authenticate. / ユーザーは認証のためにIdentity Provider（例：Google、Auth0）にリダイレクトされます。
+    4. Upon successful authentication by the Identity Provider, the user is redirected back to the application with an ID Token. / Identity Providerによる認証成功後、ユーザーはIDトークンとともにアプリケーションにリダイレクトされます。
+    5. The system validates the ID Token, establishes a session, and identifies the user's role. / システムがIDトークンを検証し、セッションを確立し、ユーザーのロールを識別します。
+    6. The user is redirected to their role-specific dashboard. / ユーザーが自分のロール専用のダッシュボードにリダイレクトされます。
   - **Post-conditions / 事後条件**: The user is logged in and can see the interface corresponding to their assigned role. / ユーザーがログインし、割り当てられたロールに対応するインターフェースが表示されること。
 
 - **Scenario 2: Role-Specific Feature Access / シナリオ2: ロール固有の機能アクセス**
@@ -60,7 +61,7 @@ The "Multi-Go" system requires a centralized and user-friendly interface for man
 | FR-2 | The system **must** support at least three distinct user roles: `Administrator`, `Nurse`, and `Caregiver`. / システムは少なくとも3つの異なるユーザーロール（`管理者`、`看護士`、および`介護士`）を**サポートしなければならない**。 |
 | FR-3 | The UI **must** dynamically display or hide features and navigation elements based on the authenticated user's role. / UIは認証されたユーザーのロールに基づいて、機能やナビゲーション要素を動的に表示または非表示に**しなければならない**。 |
 | FR-4 | The application layout **must** be responsive and function correctly on screen widths ranging from 768px (tablet portrait) to 1920px (standard HD desktop). / アプリケーションのレイアウトはレスポンシブであり、768px（タブレット縦向き）から1920px（標準HDデスクトップ）までの画面幅で正しく機能**しなければならない**。 |
-| FR-5 | The system **must** use OAuth for user authentication. / システムはユーザー認証にOAuthを使用**しなければならない**。 |
+| FR-5 | The system **must** use OpenID Connect for user authentication. / システムはユーザー認証にOpenID Connectを**使用しなければならない**。 |
 | FR-6 | The distinct sets of features for each role (Administrator, Nurse, Caregiver) will be defined in separate, detailed requirements. / 各ロール（管理者、看護士、介護士）ごとの明確な機能セットは、別途詳細な要件で定義されます。 |
 | FR-7 | The system **must** implement Progressive Web App (PWA) functionality, including home screen installation and robust offline capabilities to ensure usability even in areas with weak radio signals. / システムは、ホーム画面へのインストールおよび電波の弱い場所でも利用可能にするための堅牢なオフライン機能を含むプログレッシブウェブアプリ（PWA）機能を**実装しなければならない**。 |
 | FR-8 | The system **must** provide mechanisms within the web application to manage and assign the application-specific roles (Administrator, Nurse, Caregiver). / システムは、Webアプリケーション内でアプリケーション固有のロール（管理者、看護士、介護士）を管理および割り当てするためのメカニズムを**提供しなければならない**。 |
@@ -73,6 +74,7 @@ The "Multi-Go" system requires a centralized and user-friendly interface for man
 | NFR-2 | **Performance / パフォーマンス**: The initial page load time for a logged-in user must be under 3 seconds on a standard broadband connection. / ログインしたユーザーの初期ページ読み込み時間は、標準的なブロードバンド接続で3秒未満でなければならない。 |
 | NFR-3 | **Compatibility / 互換性**: The application must render correctly on the latest stable versions of Chrome, Firefox, and Safari. / アプリケーションは、Chrome、Firefox、Safariの最新の安定バージョンで正しく表示されなければならない。 |
 | NFR-4 | **Localization / ローカライゼーション**: All user-facing text **must** be available in English, Japanese, and Chinese. The application should provide a mechanism for the user to switch between these languages. / 全てのユーザー向けテキストは、英語、日本語、中国語で**利用可能でなければならない**。アプリケーションは、ユーザーがこれらの言語を切り替えるためのメカニズムを提供する必要がある。 |
+| NFR-5 | **Accessibility (China) / アクセシビリティ（中国）**: The application **must** be fully functional for users within mainland China. This requires avoiding dependencies on services that are commonly blocked (e.g., Google Fonts, certain Google APIs) and may require specific hosting and compliance considerations (e.g., an ICP license). / アプリケーションは、中国本土内のユーザーに対して完全に機能**しなければならない**。これには、一般的にブロックされているサービス（例: Google Fonts, 特定のGoogle API）への依存を避けること、および特定のホスティングとコンプライアンスの考慮（例: ICPライセンス）が必要になる場合がある。 |
 
 ## 6. Success Criteria / 成功基準
 

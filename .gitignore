@@ -6,9 +6,9 @@ log
 .vscode/
 
 # Ignore build file
-build
-install
-__pycache__
+build/
+install/
+__pycache__/
 
 # Ignore map updates
 src/boot/maps/rtabmap.db
@@ -24,3 +24,34 @@ src/HesaiLidar_ROS_2.0
 
 src/mecanum_drive
 
+# Node.js / WebApp
+node_modules/
+dist/
+.env*
+coverage/
+.npm/
+*.tsbuildinfo
+build/ # Added for Node.js build artifacts
+
+# Python
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# C++
+bin/
+obj/
+out/
+*.o
+*.so
+*.a
+*.exe
+*.dll
+
+# Universal
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.idea/

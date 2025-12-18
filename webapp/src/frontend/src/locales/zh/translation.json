@@ -1,0 +1,11 @@
+{
+  "dashboard_title": "仪表板",
+  "login_page_title": "登录",
+  "login_description": "请登录以访问Multi-Go应用程序。",
+  "login_button": "使用OpenID Connect登录",
+  "user_management_title": "用户管理",
+  "loading": "加载中...",
+  "welcome": "欢迎",
+  "logout": "退出",
+  "home": "首页"
+}

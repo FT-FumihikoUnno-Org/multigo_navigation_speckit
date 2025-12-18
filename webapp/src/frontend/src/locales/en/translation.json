@@ -1,0 +1,11 @@
+{
+  "dashboard_title": "Dashboard",
+  "login_page_title": "Login",
+  "login_description": "Please log in to access the Multi-Go application.",
+  "login_button": "Login with OpenID Connect",
+  "user_management_title": "User Management",
+  "loading": "Loading...",
+  "welcome": "Welcome",
+  "logout": "Logout",
+  "home": "Home"
+}

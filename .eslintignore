@@ -1,0 +1,12 @@
+# Ignore Node.js modules
+node_modules/
+
+# Ignore build artifacts
+dist/
+build/
+
+# Ignore coverage reports
+coverage/
+
+# Ignore minified JavaScript files
+*.min.js

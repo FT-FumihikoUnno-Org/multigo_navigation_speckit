@@ -9,29 +9,29 @@ This document breaks down the work required to implement the feature.
 
 ## Phase 1: Project Setup / フェーズ1: プロジェクトのセットアップ
 
-- [ ] Initialize `webapp/src/backend` Node.js project with Express and TypeScript. / `webapp/src/backend`のNode.jsプロジェクトをExpressとTypeScriptで初期化する。
-- [ ] Initialize `webapp/src/frontend` React project using Vite with the TypeScript template. / `webapp/src/frontend`のReactプロジェクトをViteのTypeScriptテンプレートを使用して初期化する。
-- [ ] Set up a monorepo structure (e.g., using npm workspaces). / モノレポ構造（例: npmワークスペースを使用）をセットアップする。
-- [ ] Create a `docker-compose.yml` file to orchestrate the `frontend`, `backend`, and `postgres` services for local development. / ローカル開発用に`frontend`、`backend`、`postgres`サービスを連携させる`docker-compose.yml`ファイルを作成する。
-- [ ] Configure `Jest` for both `backend` and `frontend` projects. / `backend`と`frontend`の両プロジェクトに`Jest`を設定する。
+- [x] Initialize `webapp/src/backend` Node.js project with Express and TypeScript. / `webapp/src/backend`のNode.jsプロジェクトをExpressとTypeScriptで初期化する。
+- [x] Initialize `webapp/src/frontend` React project using Vite with the TypeScript template. / `webapp/src/frontend`のReactプロジェクトをViteのTypeScriptテンプレートを使用して初期化する。
+- [x] Set up a monorepo structure (e.g., using npm workspaces). / モノレポ構造（例: npmワークスペースを使用）をセットアップする。
+- [x] Create a `docker-compose.yml` file to orchestrate the `frontend`, `backend`, and `postgres` services for local development. / ローカル開発用に`frontend`、`backend`、`postgres`サービスを連携させる`docker-compose.yml`ファイルを作成する。
+- [x] Configure `Jest` for both `backend` and `frontend` projects. / `backend`と`frontend`の両プロジェクトに`Jest`を設定する。
 
 ## Phase 2: Backend Development / フェーズ2: バックエンド開発
 
-- [ ] **Database / データベース**:
-  - [ ] Design the database schema for `users`, `roles`, and a `user_roles` join table. / `users`、`roles`、および`user_roles`結合テーブルのデータベーススキーマを設計する。
-  - [ ] Create SQL migration scripts to set up the tables in PostgreSQL. / PostgreSQLにテーブルをセットアップするためのSQLマイグレーションスクリプトを作成する。
+- [x] **Database / データベース**:
+  - [x] Design the database schema for `users`, `roles`, and a `user_roles` join table. / `users`、`roles`、および`user_roles`結合テーブルのデータベーススキーマを設計する。
+  - [x] Create SQL migration scripts to set up the tables in PostgreSQL. / PostgreSQLにテーブルをセットアップするためのSQLマイグレーションスクリプトを作成する。
 - [ ] **API & Services / APIとサービス**:
-  - [ ] Implement database models/services to interact with the `users` and `roles` tables. / `users`と`roles`テーブルとやり取りするためのデータベースモデル/サービスを実装する。
-  - [ ] Set up `Passport.js` with an OAuth 2.0 strategy. / OAuth 2.0戦略で`Passport.js`をセットアップする。
-  - [ ] Create a `/api/auth/login` endpoint that initiates the OAuth flow. / OAuthフローを開始する`/api/auth/login`エンドポイントを作成する。
-  - [ ] Create a `/api/auth/callback` endpoint to handle the OAuth redirect. / OAuthリダイレクトを処理する`/api/auth/callback`エンドポイントを作成する。
-  - [ ] Create a `/api/auth/logout` endpoint to destroy the session. / セッションを破棄する`/api/auth/logout`エンドポイントを作成する。
-  - [ ] Create a `/api/users/me` endpoint to fetch the current authenticated user's data, including their role. / 現在認証されているユーザーのデータ（ロールを含む）を取得する`/api/users/me`エンドポイントを作成する。
+  - [x] Implement database models/services to interact with the `users` and `roles` tables. / `users`と`roles`テーブルとやり取りするためのデータベースモデル/サービスを実装する。
+  - [x] Set up `Passport.js` with an OpenID Connect strategy. / OpenID Connect戦略で`Passport.js`をセットアップする。
+  - [x] Create a `/api/auth/login` endpoint that initiates the OpenID Connect flow. / OpenID Connectフローを開始する`/api/auth/login`エンドポイントを作成する。
+  - [x] Create a `/api/auth/callback` endpoint to handle the OpenID Connect redirect. / OpenID Connectリダイレクトを処理する`/api/auth/callback`エンドポイントを作成する。
+  - [x] Create a `/api/auth/logout` endpoint to destroy the session. / セッションを破棄する`/api/auth/logout`エンドポイントを作成する。
+  - [x] Create a `/api/users/me` endpoint to fetch the current authenticated user's data, including their role. / 現在認証されているユーザーのデータ（ロールを含む）を取得する`/api/users/me`エンドポイントを作成する。
 - [ ] **Role Management / ロール管理**:
-  - [ ] Create secure API endpoints for role management (e.g., `GET /api/users`, `POST /api/users/:id/role`). / ロール管理のためのセキュアなAPIエンドポイントを作成する（例: `GET /api/users`, `POST /api/users/:id/role`）。
-  - [ ] Implement middleware to protect these endpoints, ensuring only `Administrator` roles can access them. / これらのエンドポイントを保護するミドルウェアを実装し、`管理者`ロールのみがアクセスできるようにする。
+  - [x] Create secure API endpoints for role management (e.g., `GET /api/users`, `POST /api/users/:id/role`). / ロール管理のためのセキュアなAPIエンドポイントを作成する（例: `GET /api/users`, `POST /api/users/:id/role`）。
+  - [x] Implement middleware to protect these endpoints, ensuring only `Administrator` roles can access them. / これらのエンドポイントを保護するミドルウェアを実装し、`管理者`ロールのみがアクセスできるようにする。
 - [ ] **Testing / テスト**:
-  - [ ] Write unit tests for the services (e.g., user service, auth service). / サービス（例: ユーザーサービス、認証サービス）の単体テストを作成する。
+  - [x] Write unit tests for the services (e.g., user service, auth service). / サービス（例: ユーザーサービス、認証サービス）の単体テストを作成する。
   - [ ] Write integration tests for all API endpoints. / すべてのAPIエンドポイントの統合テストを作成する。
 
 ## Phase 3: Frontend Development / フェーズ3: フロントエンド開発
@@ -39,6 +39,7 @@ This document breaks down the work required to implement the feature.
 - [ ] **Setup & Structure / セットアップと構造**:
   - [ ] Set up `React Router` for client-side routing. / クライアントサイドのルーティングのために`React Router`をセットアップする。
   - [ ] Configure `MUI` with a custom theme (colors, fonts). / カスタムテーマ（色、フォント）で`MUI`を設定する。
+  - [ ] Download and configure self-hosted fonts (e.g., Roboto) to avoid reliance on Google Fonts for China accessibility. / 中国でのアクセシビリティのため、Google Fontsへの依存を避けるためにセルフホストフォント（例: Roboto）をダウンロードして設定する。
   - [ ] Create an API service module to communicate with the backend. / バックエンドと通信するためのAPIサービスモジュールを作成する。
 - [ ] **Internationalization (i18n) / 国際化対応**:
   - [ ] Set up `i18next` and `react-i18next` in the frontend application. / フロントエンドアプリケーションに`i18next`と`react-i18next`をセットアップする。

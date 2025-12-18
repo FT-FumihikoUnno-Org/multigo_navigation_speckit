@@ -1,0 +1,12 @@
+{
+  "name": "webapp",
+  "private": true,
+  "workspaces": [
+    "src/frontend",
+    "src/backend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=frontend & npm run dev --workspace=backend",
+    "build": "npm run build --workspace=backend && npm run build --workspace=frontend"
+  }
+}

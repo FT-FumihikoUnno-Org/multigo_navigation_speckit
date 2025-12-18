@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: multigo
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./webapp/src/backend
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://user:password@db:5432/multigo
+      NODE_ENV: development
+    volumes:
+      - ./webapp/src/backend:/app
+      - /app/node_modules
+
+  frontend:
+    build:
+      context: ./webapp/src/frontend
+      dockerfile: Dockerfile
+    ports:
+      - '5173:5173' # Vite's default port
+    depends_on:
+      - backend
+    volumes:
+      - ./webapp/src/frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:

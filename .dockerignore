@@ -1,0 +1,26 @@
+# Ignore Node.js modules
+node_modules/
+
+# Ignore Git repository files
+.git/
+
+# Ignore Docker specific files
+Dockerfile*
+.dockerignore
+
+# Ignore log files
+*.log*
+
+# Ignore environment files
+.env*
+
+# Ignore coverage reports
+coverage/
+
+# Ignore temporary files
+*.tmp
+*.swp
+
+# Ignore build artifacts if any
+dist/
+build/

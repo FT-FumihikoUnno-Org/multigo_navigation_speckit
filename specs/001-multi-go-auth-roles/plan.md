@@ -6,9 +6,9 @@
 
 ## Summary / 概要
 
-This plan outlines the technical approach for building a foundational web application to manage the "Multi-Go" system. The core of this implementation is to establish a robust framework for user authentication (via OpenID Connect) and role-based access control (RBAC) for `Administrator`, `Nurse`, and `Caregiver` roles. The application will be a Progressive Web App (PWA) to ensure offline usability.
+This plan outlines the technical approach for building a foundational web application to manage the "Multi-Go" system. The core of this implementation is to establish a robust framework for user authentication (via OpenID Connect, OAuth, etc.) and role-based access control (RBAC) for `Administrator`, `Nurse`, and `Caregiver` roles. The application will be a Progressive Web App (PWA) to ensure offline usability.
 
-この計画は、「Multi-Go」システムを管理するための基本的なWebアプリケーションを構築するための技術的アプローチを概説します。この実装の中核は、`管理者`、`看護士`、`介護士`のロールに対するユーザー認証（OAuth経由）とロールベースアクセス制御（RBAC）のための堅牢なフレームワークを確立することです。アプリケーションは、オフラインでの使いやすさを確保するためにプログレッシブウェブアプリ（PWA）になります。
+この計画は、「Multi-Go」システムを管理するための基本的なWebアプリケーションを構築するための技術的アプローチを概説します。この実装の中核は、`管理者`、`看護士`、`介護士`のロールに対するユーザー認証（OpenID Connect, OAuth経由, etc.）とロールベースアクセス制御（RBAC）のための堅牢なフレームワークを確立することです。アプリケーションは、オフラインでの使いやすさを確保するためにプログレッシブウェブアプリ（PWA）になります。
 
 ## Technical Context / 技術的背景
 

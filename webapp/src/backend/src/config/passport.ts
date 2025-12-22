@@ -1,65 +1,12 @@
 import passport from 'passport';
-import { Strategy as OAuth2Strategy } from 'passport-oauth2';
-import { User, UserSchema } from '../models/user.model';
-import { RoleSchema } from '../models/role.model';
-
-// Define Profile and VerifyCallback locally as they are not directly exported from passport-oauth2
-interface OAuth2Profile {
-  id: string;
-  displayName: string;
-  emails?: [{ value: string }];
-  // Add other properties you expect from the OAuth provider's profile, e.g., 'sub' for OIDC
-  sub?: string; 
-}
-
-// Define VerifyCallback locally
-type VerifyCallback = (error: any, user?: any, info?: any) => void;
-
-passport.use(new OAuth2Strategy({
-    // Use standard OIDC endpoints. These are examples and would need to be configured.
-    authorizationURL: process.env.OIDC_AUTH_URL || 'https://myoidcprovider.com/auth/realms/myrealm/protocol/openid-connect/auth', // OIDC Authorization Endpoint
-    tokenURL: process.env.OIDC_TOKEN_URL || 'https://myoidcprovider.com/auth/realms/myrealm/protocol/openid-connect/token', // OIDC Token Endpoint
-    // issuer is not directly supported by passport-oauth2 strategy, but the URLs should point to OIDC endpoints.
-    clientID: process.env.OIDC_CLIENT_ID || 'dummy_client_id',
-    clientSecret: process.env.OIDC_CLIENT_SECRET || 'dummy_client_secret',
-    callbackURL: process.env.OIDC_REDIRECT_URI || "http://localhost:3000/api/auth/callback",
-    scope: 'openid profile email', // OIDC scopes are crucial
-    // OIDC specific parameters can sometimes be passed via params in the callback
-    // or configured differently depending on the library.
-  },
-  async (accessToken: string, refreshToken: string | undefined, params: any, profile: OAuth2Profile, done: VerifyCallback) => { // params may contain id_token
-    try {
-      // For OIDC, the profile object often comes from the ID Token or UserInfo endpoint.
-      // The 'sub' claim is the unique identifier. Use profile.id as fallback.
-      const oidcId = profile.sub || profile.id;
-      const email = profile.emails && profile.emails[0].value;
-      
-      if (!oidcId || !email) {
-        return done(new Error("Missing required OIDC claims (sub or email)"));
-      }
-
-      let user = await UserSchema.findByEmail(email);
-
-      if (!user) {
-        user = await UserSchema.create({
-          oauth_provider: 'openidconnect', // Store OIDC as provider
-          oauth_id: oidcId, // Use sub claim as oauth_id
-          email: email,
-          display_name: profile.displayName,
-        });
-      } else {
-        // Optionally update user info if it changed
-        if (user.display_name !== profile.displayName) {
-          // await UserSchema.update(user.id, { display_name: profile.displayName }); // Assuming such a method exists
-        }
-      }
-
-      return done(null, user);
-    } catch (error) {
-      return done(error as Error);
-    }
-  }
-));
+import { Strategy as OpenIDConnectStrategy } from 'passport-openidconnect';
+import {
+  OIDC_CLIENT_ID,
+  OIDC_CLIENT_SECRET,
+  OIDC_ISSUER_URL,
+  OIDC_REDIRECT_URI,
+} from './index';
+import { query } from './database';
 
 passport.serializeUser((user: any, done) => {
   done(null, user.id);
@@ -67,16 +14,64 @@ passport.serializeUser((user: any, done) => {
 
 passport.deserializeUser(async (id: number, done) => {
   try {
-    const user = await UserSchema.findById(id);
-    if (!user) {
-        return done(new Error('User not found'));
-    }
-    const roles = await RoleSchema.findRolesByUserId(user.id!);
-    (user as any).roles = roles;
-    done(null, user);
-  } catch (error) {
-    done(error as Error);
+    const { rows } = await query(
+      `SELECT u.id, u.oidc_id, u.email, u.display_name, r.name as role
+       FROM users u
+       JOIN roles r ON u.role_id = r.id
+       WHERE u.id = $1`,
+      [id]
+    );
+    done(null, rows[0]);
+  } catch (err) {
+    done(err);
   }
 });
+
+passport.use(
+  'oidc',
+  new OpenIDConnectStrategy(
+    {
+      issuer: OIDC_ISSUER_URL,
+      authorizationURL: `${OIDC_ISSUER_URL}/protocol/openid-connect/auth`, // Adjust for your IdP
+      tokenURL: `${OIDC_ISSUER_URL}/protocol/openid-connect/token`, // Adjust for your IdP
+      userInfoURL: `${OIDC_ISSUER_URL}/protocol/openid-connect/userinfo`, // Adjust for your IdP
+      clientID: OIDC_CLIENT_ID,
+      clientSecret: OIDC_CLIENT_SECRET,
+      callbackURL: OIDC_REDIRECT_URI,
+      scope: 'openid profile email',
+    },
+    async (issuer: string, profile: any, done: (err: any, user?: any) => void) => {
+      try {
+        const oidc_id = profile.id;
+        const email = profile.emails[0].value;
+        const displayName = profile.displayName || (profile.name ? profile.name.givenName : '');
+
+        // Check if user exists
+        let { rows } = await query('SELECT * FROM users WHERE oidc_id = $1', [oidc_id]);
+
+        let user = rows[0];
+        if (!user) {
+          // If user does not exist, create a new one with a default role (e.g., 'Caregiver')
+          const defaultRole = 'Caregiver'; // Or any other default role
+          const { rows: roleRows } = await query('SELECT id FROM roles WHERE name = $1', [defaultRole]);
+          const roleId = roleRows[0]?.id;
+
+          if (!roleId) {
+            return done(new Error(`Default role '${defaultRole}' not found.`));
+          }
+
+          const { rows: newRows } = await query(
+            'INSERT INTO users (oidc_id, email, display_name, role_id) VALUES ($1, $2, $3, $4) RETURNING *',
+            [oidc_id, email, displayName, roleId]
+          );
+          user = newRows[0];
+        }
+        done(null, user);
+      } catch (err: any) {
+        done(err);
+      }
+    }
+  )
+);
 
 export default passport;

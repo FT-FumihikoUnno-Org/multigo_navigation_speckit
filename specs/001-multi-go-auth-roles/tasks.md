@@ -1,68 +1,215 @@
-# Implementation Tasks: Multi-Go Web App with Role-Based Access
-# 実装タスク: ロールベースアクセス権を持つMulti-Goウェブアプリ
+---
+description: "Task list for implementing the Multi-Go Web App with Role-Based Access"
+---
 
-**Spec / 仕様書**: [spec.md](./spec.md)
-**Plan / 計画書**: [plan.md](./plan.md)
+# Tasks: Multi-Go Web App with Role-Based Access
+# タスク: ロールベースアクセス権を持つMulti-Goウェブアプリ
 
-This document breaks down the work required to implement the feature.
-このドキュメントは、機能の実装に必要な作業を分割したものです。
+**Input**: Design documents from `/specs/001-multi-go-auth-roles/`
+**入力**: `/specs/[###-feature-name]/`からの設計文書
 
-## Phase 1: Project Setup / フェーズ1: プロジェクトのセットアップ
+**Prerequisites**: plan.md (required), spec.md (required for user stories)
+**前提条件**: plan.md (必須), spec.md (ユーザーストーリーに必須)
 
-- [x] Initialize `webapp/src/backend` Node.js project with Express and TypeScript. / `webapp/src/backend`のNode.jsプロジェクトをExpressとTypeScriptで初期化する。
-- [x] Initialize `webapp/src/frontend` React project using Vite with the TypeScript template. / `webapp/src/frontend`のReactプロジェクトをViteのTypeScriptテンプレートを使用して初期化する。
-- [x] Set up a monorepo structure (e.g., using npm workspaces). / モノレポ構造（例: npmワークスペースを使用）をセットアップする。
-- [x] Create a `docker-compose.yml` file to orchestrate the `frontend`, `backend`, and `postgres` services for local development. / ローカル開発用に`frontend`、`backend`、`postgres`サービスを連携させる`docker-compose.yml`ファイルを作成する。
-- [x] Configure `Jest` for both `backend` and `frontend` projects. / `backend`と`frontend`の両プロジェクトに`Jest`を設定する。
+**Tests**: Tasks include tests as per the TDD strategy in `plan.md`.
+**テスト**: `plan.md`のTDD戦略に基づき、タスクにテストを含みます。
 
-## Phase 2: Backend Development / フェーズ2: バックエンド開発
+**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+**構成**: 各ストーリーを独立して実装・テストできるよう、タスクはユーザーストーリーごとにグループ化されています。
 
-- [x] **Database / データベース**:
-  - [x] Design the database schema for `users`, `roles`, and a `user_roles` join table. / `users`、`roles`、および`user_roles`結合テーブルのデータベーススキーマを設計する。
-  - [x] Create SQL migration scripts to set up the tables in PostgreSQL. / PostgreSQLにテーブルをセットアップするためのSQLマイグレーションスクリプトを作成する。
-- [ ] **API & Services / APIとサービス**:
-  - [x] Implement database models/services to interact with the `users` and `roles` tables. / `users`と`roles`テーブルとやり取りするためのデータベースモデル/サービスを実装する。
-  - [x] Set up `Passport.js` with an OpenID Connect strategy. / OpenID Connect戦略で`Passport.js`をセットアップする。
-  - [x] Create a `/api/auth/login` endpoint that initiates the OpenID Connect flow. / OpenID Connectフローを開始する`/api/auth/login`エンドポイントを作成する。
-  - [x] Create a `/api/auth/callback` endpoint to handle the OpenID Connect redirect. / OpenID Connectリダイレクトを処理する`/api/auth/callback`エンドポイントを作成する。
-  - [x] Create a `/api/auth/logout` endpoint to destroy the session. / セッションを破棄する`/api/auth/logout`エンドポイントを作成する。
-  - [x] Create a `/api/users/me` endpoint to fetch the current authenticated user's data, including their role. / 現在認証されているユーザーのデータ（ロールを含む）を取得する`/api/users/me`エンドポイントを作成する。
-- [ ] **Role Management / ロール管理**:
-  - [x] Create secure API endpoints for role management (e.g., `GET /api/users`, `POST /api/users/:id/role`). / ロール管理のためのセキュアなAPIエンドポイントを作成する（例: `GET /api/users`, `POST /api/users/:id/role`）。
-  - [x] Implement middleware to protect these endpoints, ensuring only `Administrator` roles can access them. / これらのエンドポイントを保護するミドルウェアを実装し、`管理者`ロールのみがアクセスできるようにする。
-- [ ] **Testing / テスト**:
-  - [x] Write unit tests for the services (e.g., user service, auth service). / サービス（例: ユーザーサービス、認証サービス）の単体テストを作成する。
-  - [ ] Write integration tests for all API endpoints. / すべてのAPIエンドポイントの統合テストを作成する。
+## Format: `[ID] [P?] [Story] Description`
 
-## Phase 3: Frontend Development / フェーズ3: フロントエンド開発
+- **[P]**: Can run in parallel (different files, no dependencies) / 並列実行可能（ファイルが異なり、依存関係がない）
+- **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3) / このタスクが属するユーザーストーリー（例: US1, US2, US3）
+- Include exact file paths in descriptions / 説明に正確なファイルパスを含める
 
-- [ ] **Setup & Structure / セットアップと構造**:
-  - [ ] Set up `React Router` for client-side routing. / クライアントサイドのルーティングのために`React Router`をセットアップする。
-  - [ ] Configure `MUI` with a custom theme (colors, fonts). / カスタムテーマ（色、フォント）で`MUI`を設定する。
-  - [ ] Download and configure self-hosted fonts (e.g., Roboto) to avoid reliance on Google Fonts for China accessibility. / 中国でのアクセシビリティのため、Google Fontsへの依存を避けるためにセルフホストフォント（例: Roboto）をダウンロードして設定する。
-  - [ ] Create an API service module to communicate with the backend. / バックエンドと通信するためのAPIサービスモジュールを作成する。
-- [ ] **Internationalization (i18n) / 国際化対応**:
-  - [ ] Set up `i18next` and `react-i18next` in the frontend application. / フロントエンドアプリケーションに`i18next`と`react-i18next`をセットアップする。
-  - [ ] Create translation files for English, Japanese, and Chinese. / 英語、日本語、中国語の翻訳ファイルを作成する。
-  - [ ] Implement a language switcher component to allow users to change the language. / ユーザーが言語を変更できる言語スイッチャーコンポーネントを実装する。
-  - [ ] Refactor existing UI components to use the translation functions. / 既存のUIコンポーネントをリファクタリングして翻訳関数を使用するようにする。
-- [ ] **Authentication / 認証**:
-  - [ ] Create an `AuthContext` to manage authentication state, user data, and roles throughout the application. / アプリケーション全体で認証状態、ユーザーデータ、ロールを管理するための`AuthContext`を作成する。
-  - [ ] Build the `LoginPage` with a button to trigger the OAuth flow. / OAuthフローを開始するボタンを持つ`LoginPage`を構築する。
-  - [ ] Implement a `ProtectedRoute` component that checks for authentication and role. / 認証とロールをチェックする`ProtectedRoute`コンポーネントを実装する。
-- [ ] **UI & Views / UIとビュー**:
-  - [ ] Build a main application layout (e.g., `AppLayout`) with a persistent sidebar and header. / 固定サイドバーとヘッダーを持つメインアプリケーションレイアウト（例: `AppLayout`）を構築する。
-  - [ ] Dynamically render navigation links in the sidebar based on the user's role. / ユーザーのロールに基づいてサイドバーのナビゲーションリンクを動的に描画する。
-  - [ ] Create a placeholder `DashboardPage`. / プレースホルダーの`DashboardPage`を作成する。
-  - [ ] Create a basic `UserManagementPage` (for Administrators) that lists users and allows role changes. / ユーザーを一覧表示し、ロール変更を許可する基本的な`UserManagementPage`（管理者向け）を作成する。
-- [ ] **Testing / テスト**:
-  - [ ] Write unit tests for key components (e.g., `ProtectedRoute`, `LoginPage`). / 主要コンポーネント（例: `ProtectedRoute`, `LoginPage`）の単体テストを作成する。
-  - [ ] Write integration tests for user flows like login and navigating to a role-protected page. / ログインやロール保護されたページへのナビゲーションなどのユーザーフローの統合テストを作成する。
+## Path Conventions / パス規約
 
-## Phase 4: PWA Implementation / フェーズ4: PWAの実装
+- **Web App**: `webapp/src/backend/`, `webapp/src/frontend/`
+- Paths below are adjusted for the `plan.md` structure. / 以下のパスは `plan.md` の構成に合わせて調整されています。
 
-- [ ] Add a `manifest.webmanifest` file with application metadata (name, icons, start_url). / アプリケーションのメタデータ（名前、アイコン、開始URL）を持つ`manifest.webmanifest`ファイルを追加する。
-- [ ] Create a service worker file (`service-worker.ts`). / サービスワーカーファイル（`service-worker.ts`）を作成する。
-- [ ] Register the service worker in the main application entry point. / メインアプリケーションのエントリポイントでサービスワーカーを登録する。
-- [ ] Implement a caching strategy for static assets (e.g., JS, CSS, images) using the Cache API. / Cache APIを使用して静的アセット（例: JS, CSS, 画像）のキャッシング戦略を実装する。
-- [ ] Implement a network-first or stale-while-revalidate strategy for API calls to ensure basic offline functionality. / 基本的なオフライン機能を確保するために、API呼び出しに対してネットワークファーストまたはstale-while-revalidate戦略を実装する。
+---
+
+## Phase 1: Setup (Shared Infrastructure) / フェーズ1: セットアップ (共通インフラ)
+
+**Purpose**: Project initialization and basic structure for both frontend and backend.
+**目的**: フロントエンドとバックエンド両方のプロジェクト初期化と基本構造の構築。
+
+- [X] T001 [P] Initialize Node.js project in `webapp/src/backend/` and add dependencies: express, passport, passport-openidconnect, pg, dotenv.
+    - `webapp/src/backend/` でNode.jsプロジェクトを初期化し、依存関係を追加: express, passport, passport-openidconnect, pg, dotenv。
+- [X] T002 [P] Initialize Vite + React (TypeScript) project in `webapp/src/frontend/` and add dependencies: react-router-dom, @mui/material, @emotion/react, @emotion/styled, i18next, react-i18next.
+    - `webapp/src/frontend/` でVite + React (TypeScript)プロジェクトを初期化し、依存関係を追加: react-router-dom, @mui/material, @emotion/react, @emotion/styled, i18next, react-i18next。
+- [X] T003 [P] Configure linting (ESLint) and formatting (Prettier) for both `frontend` and `backend` workspaces.
+    - `frontend`と`backend`両方のワークスペースにリンティング(ESLint)とフォーマット(Prettier)を設定。
+- [X] T004 [P] Configure TypeScript (`tsconfig.json`) for both `frontend`と`backend`.
+    - `frontend`と`backend`両方にTypeScript (`tsconfig.json`)を設定。
+- [X] T005 [P] Setup testing frameworks: Jest and Supertest for `webapp/src/backend/`, Jest and React Testing Library for `webapp/src/frontend/`.
+    - テストフレームワークをセットアップ: `webapp/src/backend/` にJestとSupertest、`webapp/src/frontend/` にJestとReact Testing Library。
+- [X] T006 Configure `docker-compose.yml` to run the backend, frontend (dev server), and a PostgreSQL database service.
+    - バックエンド、フロントエンド（開発サーバー）、PostgreSQLデータベースサービスを実行するために`docker-compose.yml`を設定。
+
+---
+
+## Phase 2: Foundational (Blocking Prerequisites) / フェーズ2: 基盤 (ブロッキング前提条件)
+
+**Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented.
+**目的**: ユーザーストーリーの実装を開始する前に完了しなければならないコアインフラ。
+
+**⚠️ CRITICAL**: No user story work can begin until this phase is complete.
+**⚠️ 重要**: このフェーズが完了するまで、ユーザーストーリーの作業は開始できません。
+
+### Backend / バックエンド
+- [X] T007 Setup basic Express server in `webapp/src/backend/src/server.ts` with a health check endpoint.
+    - `webapp/src/backend/src/server.ts` にヘルスチェックエンドポイントを持つ基本的なExpressサーバーをセットアップ。
+- [X] T008 [P] Configure environment variable handling (e.g., using `dotenv`) in `webapp/src/backend/src/config/`.
+    - `webapp/src/backend/src/config/` で環境変数処理（例: `dotenv`を使用）を設定。
+- [X] T009 Setup PostgreSQL database connection module in `webapp/src/backend/src/config/database.ts`.
+    - `webapp/src/backend/src/config/database.ts` にPostgreSQLデータベース接続モジュールをセットアップ。
+- [X] T010 Create database migration scripts for `users` and `roles` tables. The `users` table should link to `roles`.
+    - `users`と`roles`テーブル用のデータベースマイグレーションスクリプトを作成。`users`テーブルは`roles`にリンクする。
+- [X] T011 Implement core Passport.js setup with an OpenID Connect strategy in `webapp/src/backend/src/config/passport.ts`.
+    - `webapp/src/backend/src/config/passport.ts` にOpenID Connect戦略でコアPassport.jsセットアップを実装。
+- [X] T012 [P] Create base authentication middleware in `webapp/src/backend/src/middleware/auth.ts` to check for authenticated sessions.
+    - `webapp/src/backend/src/middleware/auth.ts` に認証済みセッションをチェックするための基本認証ミドルウェアを作成。
+- [X] T013 [P] Create error handling and logging middleware in `webapp/src/backend/src/middleware/`.
+    - `webapp/src/backend/src/middleware/` にエラーハンドリングとロギングのミドルウェアを作成。
+
+### Frontend / フロントエンド
+- [X] T014 Setup basic application routing using `react-router-dom` in `webapp/src/frontend/src/App.tsx`.
+    - `webapp/src/frontend/src/App.tsx` で`react-router-dom`を使用して基本的なアプリケーションルーティングをセットアップ。
+- [X] T015 [P] Create a global MUI theme provider in `webapp/src/frontend/src/theme.ts`.
+    - `webapp/src/frontend/src/theme.ts` にグローバルMUIテーマプロバイダーを作成。
+- [X] T016 **Self-host Roboto font files** in `webapp/src/frontend/public/fonts/` and configure the MUI theme to use them, avoiding Google Fonts APIs for China accessibility.
+    - 中国からのアクセシビリティのため、`webapp/src/frontend/public/fonts/` で**Robotoフォントファイルをセルフホスト**し、Google Fonts APIを避けるようにMUIテーマを設定。
+- [X] T017 Create a React Context for authentication (`AuthContext`) in `webapp/src/frontend/src/context/AuthContext.tsx` to manage user state, roles, and tokens.
+    - `webapp/src/frontend/src/context/AuthContext.tsx` に認証用React Context (`AuthContext`)を作成し、ユーザー状態、ロール、トークンを管理。
+
+---
+
+## Phase 3: User Story 1 - User Authentication (Priority: P1) 🎯 MVP / フェーズ3: ユーザーストーリー1 - ユーザー認証 (優先度: P1) 🎯 MVP
+
+**Goal**: A user can log in via an external OpenID provider, establishing a session and identifying their role.
+**目標**: ユーザーが外部OpenIDプロバイダー経由でログインし、セッションを確立して自分のロールを識別できる。
+**Independent Test**: After logging in via the IdP, the user is redirected to the dashboard and their username is displayed.
+**独立テスト**: IdP経由でログイン後、ユーザーはダッシュボードにリダイレクトされ、ユーザー名が表示される。
+
+### Tests for User Story 1 (TDD) / ユーザーストーリー1のテスト (TDD)
+- [X] T018 [P] [US1] Backend: Write integration test for the `/auth/openid/callback` endpoint in `webapp/src/backend/tests/integration/auth.test.ts` to ensure it creates a session.
+    - バックエンド: `webapp/src/backend/tests/integration/auth.test.ts` で`/auth/openid/callback`エンドポイントの統合テストを書き、セッションが作成されることを確認。
+- [X] T019 [P] [US1] Frontend: Write a test for the login flow in `webapp/src/frontend/src/pages/Login.test.tsx`, mocking the redirect and `AuthContext` update.
+    - フロントエンド: `webapp/src/frontend/src/pages/Login.test.tsx` でログインフローのテストを書き、リダイレクトと`AuthContext`の更新をモック。
+
+### Implementation for User Story 1 / ユーザーストーリー1の実装
+- [X] T020 [P] [US1] Frontend: Create a `LoginPage.tsx` in `webapp/src/frontend/src/pages/` containing a single "Login" button.
+    - フロントエンド: `webapp/src/frontend/src/pages/` に単一の「ログイン」ボタンを含む`LoginPage.tsx`を作成。
+- [X] T021 [P] [US1] Frontend: Create a placeholder `DashboardPage.tsx` in `webapp/src/frontend/src/pages/`.
+    - フロントエンド: `webapp/src/frontend/src/pages/` にプレースホルダーの`DashboardPage.tsx`を作成。
+- [X] T022 [US1] Backend: Implement the `/auth/login` and `/auth/logout` routes in `webapp/src/backend/src/api/auth.ts`.
+    - バックエンド: `webapp/src/backend/src/api/auth.ts` に`/auth/login`と`/auth/logout`ルートを実装。
+- [X] T023 [US1] Backend: Implement the `/auth/openid/callback` route. It must validate the OIDC token, find or create a user in the database, establish a session, and redirect to the frontend dashboard.
+    - バックエンド: `/auth/openid/callback`ルートを実装。OIDCトークンを検証し、データベースでユーザーを検索または作成し、セッションを確立してフロントエンドのダッシュボードにリダイレクトする必要がある。
+- [X] T024 [US1] Backend: Create an endpoint `GET /api/me` that returns the logged-in user's data (e.g., name, email, role) from the session.
+    - バックエンド: セッションからログイン中ユーザーのデータ（名前、メール、ロールなど）を返す`GET /api/me`エンドポイントを作成。
+- [X] T025 [US1] Frontend: In `AuthContext`, implement the logic to fetch user data from the `/api/me` endpoint upon application load to check for an existing session.
+    - フロントエンド: `AuthContext`で、アプリケーション読み込み時に`/api/me`エンドポイントからユーザーデータを取得し、既存セッションをチェックするロジックを実装。
+- [X] T026 [US1] Frontend: Implement a `ProtectedRoute` component that redirects unauthenticated users from the dashboard to the login page.
+    - フロントエンド: 未認証ユーザーをダッシュボードからログインページにリダイレクトする`ProtectedRoute`コンポーネントを実装。
+
+**Checkpoint**: User Story 1 should be fully functional. A user can log in and out.
+**チェックポイント**: ユーザーストーリー1が完全に機能するはず。ユーザーはログイン・ログアウトできる。
+
+---
+
+## Phase 4: User Story 2 - Role-Specific Feature Access (Priority: P2) / フェーズ4: ユーザーストーリー2 - ロール固有の機能アクセス (優先度: P2)
+
+**Goal**: The UI dynamically changes based on the authenticated user's role (`Administrator`, `Nurse`, `Caregiver`).
+**目標**: 認証されたユーザーのロール（`管理者`、`看護士`、`介護士`）に基づいてUIが動的に変化する。
+**Independent Test**: Log in as an Administrator and see the "User Management" link. Log in as a Nurse and confirm the link is not visible.
+**独立テスト**: 管理者としてログインし、「ユーザー管理」リンクが表示されることを確認。看護士としてログインし、リンクが表示されないことを確認。
+
+### Tests for User Story 2 (TDD) / ユーザーストーリー2のテスト (TDD)
+- [X] T027 [P] [US2] Backend: Write an integration test in `webapp/src/backend/tests/integration/admin.test.ts` to verify that a non-admin user gets a 403 Forbidden error from an admin-only endpoint.
+    - バックエンド: `webapp/src/backend/tests/integration/admin.test.ts`で統合テストを書き、非管理者ユーザーが管理者専用エンドポイントから403 Forbiddenエラーを受け取ることを確認。
+- [X] T028 [P] [US2] Frontend: Write a component test for the `Navbar.tsx` that asserts the "User Management" link is rendered only if the `AuthContext` provides an `Administrator` role.
+    - フロントエンド: `Navbar.tsx`のコンポーネントテストを書き、`AuthContext`が`Administrator`ロールを提供する場合にのみ「ユーザー管理」リンクがレンダリングされることを表明。
+
+### Implementation for User Story 2 / ユーザーストーリー2の実装
+- [X] T029 [US2] Backend: Create a role-checking middleware `requireRole('Administrator')` in `webapp/src/backend/src/middleware/roles.ts`.
+    - バックエンド: `webapp/src/backend/src/middleware/roles.ts`にロールチェックミドルウェア`requireRole('Administrator')`を作成。
+- [X] T030 [P] [US2] Frontend: Create a `Navbar.tsx` component in `webapp/src/frontend/src/components/`.
+    - フロントエンド: `webapp/src/frontend/src/components/`に`Navbar.tsx`コンポーネントを作成。
+- [X] T031 [US2] Frontend: In `Navbar.tsx`, consume the `AuthContext` and conditionally render navigation links (e.g., "User Management" link for `Administrator` only).
+    - フロントエンド: `Navbar.tsx`で`AuthContext`を使用し、ナビゲーションリンクを条件付きでレンダリング（例: 「ユーザー管理」リンクは`Administrator`のみ）。
+- [X] T032 [US2] Frontend: Create a `RoleBasedGuard.tsx` component that takes a role and hides its children or redirects if the current user does not have the required role.
+    - フロントエンド: ロールを受け取り、現在のユーザーが必要なロールを持たない場合に子要素を隠すかリダイレクトする`RoleBasedGuard.tsx`コンポーネントを作成。
+- [X] T033 [US2] Frontend: Protect the route to the (not-yet-created) admin page using the `RoleBasedGuard`.
+    - フロントエンド: `RoleBasedGuard`を使用して（まだ作成されていない）管理ページへのルートを保護。
+
+**Checkpoint**: User Story 2 should be functional. The UI should now differ for admins vs. other roles.
+**チェックポイント**: ユーザーストーリー2が機能するはず。UIが管理者と他のロールで異なるようになる。
+
+---
+
+## Phase 5: User Story 3 - Admin Role Management (Priority: P3) / フェーズ5: ユーザーストーリー3 - 管理者によるロール管理 (優先度: P3)
+
+**Goal**: An administrator can view a list of users and assign/change their application-specific roles.
+**目標**: 管理者がユーザーリストを表示し、アプリケーション固有のロールを割り当て/変更できる。
+**Independent Test**: As an admin, navigate to the User Management page, change a user's role from "Nurse" to "Caregiver", and verify the change is saved and reflected.
+**独立テスト**: 管理者としてユーザー管理ページに移動し、ユーザーのロールを「看護士」から「介護士」に変更し、変更が保存・反映されることを確認。
+
+### Tests for User Story 3 (TDD) / ユーザーストーリー3のテスト (TDD)
+- [X] T034 [P] [US3] Backend: Write integration tests for `GET /api/users` and `PUT /api/users/:id/role` endpoints in `webapp/src/backend/tests/integration/users.test.ts`.
+    - バックエンド: `webapp/src/backend/tests/integration/users.test.ts`で`GET /api/users`と`PUT /api/users/:id/role`エンドポイントの統合テストを作成。
+- [X] T035 [P] [US3] Frontend: Write a test for the `UserManagementPage.tsx` to ensure it correctly lists users and that selecting a new role triggers the update API call.
+    - フロントエンド: `UserManagementPage.tsx`のテストを作成し、ユーザーが正しくリストされ、新しいロールを選択すると更新API呼び出しがトリガーされることを確認。
+
+### Implementation for User Story 3 / ユーザーストーリー3の実装
+- [X] T036 [US3] Backend: Implement `UserService` in `webapp/src/backend/src/services/userService.ts` for listing users and updating roles.
+    - バックエンド: `webapp/src/backend/src/services/userService.ts`にユーザーリストとロール更新のための`UserService`を実装。
+- [X] T037 [US3] Backend: Create API endpoints `GET /api/users` and `PUT /api/users/:id/role` in `webapp/src/backend/src/api/users.ts`. Protect both with the `requireRole('Administrator')` middleware.
+    - バックエンド: `webapp/src/backend/src/api/users.ts`に`GET /api/users`と`PUT /api/users/:id/role`APIエンドポイントを作成。両方を`requireRole('Administrator')`ミドルウェアで保護。
+- [X] T038 [P] [US3] Frontend: Create `UserManagementPage.tsx` in `webapp/src/frontend/src/pages/admin/`.
+    - フロントエンド: `webapp/src/frontend/src/pages/admin/`に`UserManagementPage.tsx`を作成。
+- [X] T039 [US3] Frontend: On this page, fetch and display a list of users from the `GET /api/users` endpoint.
+    - フロントエンド: このページで、`GET /api/users`エンドポイントからユーザーリストを取得して表示。
+- [X] T040 [US3] Frontend: For each user in the list, display their current role and provide a dropdown (MUI `<Select>`) to change it. On change, call the `PUT /api/users/:id/role` endpoint.
+    - フロントエンド: リスト内の各ユーザーについて、現在のロールを表示し、それを変更するためのドロップダウン（MUI `<Select>`）を提供。変更時に`PUT /api/users/:id/role`エンドポイントを呼び出す。
+
+---
+
+## Phase 6: Polish & Cross-Cutting Concerns / フェーズ6: 仕上げ & 横断的関心事
+
+**Purpose**: Improvements that affect multiple user stories and fulfill non-functional requirements.
+**目的**: 複数のユーザーストーリーに影響し、非機能要件を満たす改善。
+
+- [X] T041 [P] **PWA**: Configure Vite's PWA plugin, create a `manifest.webmanifest`, and a basic offline-caching `service-worker.ts` in `webapp/src/frontend/public/`.
+    - **PWA**: `webapp/src/frontend/public/`にViteのPWAプラグインを設定し、`manifest.webmanifest`と基本的なオフラインキャッシュ用`service-worker.ts`を作成。
+- [X] T042 [P] **Responsiveness**: Review all created pages (`Login`, `Dashboard`, `UserManagement`) and ensure the layout is functional and readable on screens from 768px to 1920px wide using MUI Grid/Stack.
+    - **レスポンシブ対応**: 作成したすべてのページ（`Login`, `Dashboard`, `UserManagement`）を確認し、MUI Grid/Stackを使用して768pxから1920px幅の画面でレイアウトが機能的かつ可読であることを確認。
+- [X] T043 **Localization**: Configure `i18next` in `webapp/src/frontend/src/i18n.ts`.
+    - **ローカライゼーション**: `webapp/src/frontend/src/i18n.ts`で`i18next`を設定。
+- [X] T044 [P] **Localization**: Create initial translation files (`en.json`, `ja.json`, `zh.json`) in `webapp/src/frontend/public/locales/`.
+    - **ローカライゼーション**: `webapp/src/frontend/public/locales/`に初期翻訳ファイル（`en.json`, `ja.json`, `zh.json`）を作成。
+- [X] T045 **Localization**: Refactor all user-facing strings in the React components to use the `useTranslation` hook.
+    - **ローカライゼーション**: Reactコンポーネント内のすべてのユーザー向け文字列を`useTranslation`フックを使用するようにリファクタリング。
+- [X] T046 [P] **Localization**: Add a language switcher component to the `Navbar`.
+    - **ローカライゼーション**: `Navbar`に言語切り替えコンポーネントを追加。
+- [X] T047 **Documentation**: Update the root `README.md` with detailed instructions on how to set up the environment, run the `docker-compose` stack, and log in with test credentials.
+    - **ドキュメンテーション**: ルートの`README.md`を更新し、環境設定、`docker-compose`スタックの実行、テスト資格情報でのログインに関する詳細な手順を記載。
+
+---
+
+## Dependencies & Execution Order / 依存関係と実行順序
+
+- **Setup (Phase 1)** -> **Foundational (Phase 2)** -> **User Stories (Phase 3-5)** -> **Polish (Phase 6)**
+- All user stories depend on Phase 2 completion. Once Phase 2 is done, user stories can theoretically be developed in parallel. / 全てのユーザーストーリーはフェーズ2の完了に依存。フェーズ2が完了すれば、ユーザーストーリーは理論的に並行して開発可能。
+- MVP is the completion of Phase 3 (User Story 1). / MVPはフェーズ3（ユーザーストーリー1）の完了です。
+
+## Implementation Strategy / 実装戦略
+
+1.  **MVP First**: Complete Phases 1, 2, and 3. At this point, you have a testable, deployable application that handles login/logout.
+    - **MVP優先**: フェーズ1、2、3を完了。この時点で、ログイン/ログアウトを処理するテスト可能でデプロイ可能なアプリケーションが完成。
+2.  **Incremental Delivery**: Add Phase 4 (Role-Specific UI), then Phase 5 (Admin Management).
+    - **インクリメンタル配信**: フェーズ4（ロール固有UI）、次にフェーズ5（管理者権限）を追加。
+3.  **Final Polish**: Complete Phase 6 to meet all non-functional requirements.
+    - **最終仕上げ**: フェーズ6を完了し、すべての非機能要件を満たす。

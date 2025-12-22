@@ -1,11 +1,12 @@
-/** @type {import('jest').Config} */
 module.exports = {
+  preset: 'ts-jest',
   testEnvironment: 'jsdom',
-  transform: {
-    '^.+\.(ts|tsx|js|jsx)$': 'babel-jest',
-  },
-  testMatch: ['**/**/*.spec.ts', '**/**/*.spec.tsx'],
+  testMatch: ['<rootDir>/src/**/*.{spec,test}.{ts,tsx}'],
   moduleNameMapper: {
-    '\.css$': '<rootDir>/__mocks__/styleMock.js',
+    '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
+  },
+  setupFilesAfterEnv: ['<rootDir>/setupTests.ts'],
+  transform: {
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
   },
 };

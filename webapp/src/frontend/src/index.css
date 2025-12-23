@@ -1,22 +1,32 @@
+/* Self-hosted Roboto: prefer local, prefer woff2 if available, fall back to bundled ttf */
 @font-face {
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
-  src: url('/fonts/Roboto-Regular.ttf') format('truetype');
+  src: local('Roboto'), local('Roboto-Regular'),
+       url('/fonts/Roboto-Regular.woff2') format('woff2'),
+       url('/fonts/Roboto-Regular.ttf') format('truetype');
+  font-display: swap;
 }
 
 @font-face {
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 500;
-  src: url('/fonts/Roboto-Medium.ttf') format('truetype');
+  src: local('Roboto Medium'), local('Roboto-Medium'),
+       url('/fonts/Roboto-Medium.woff2') format('woff2'),
+       url('/fonts/Roboto-Medium.ttf') format('truetype');
+  font-display: swap;
 }
 
 @font-face {
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 700;
-  src: url('/fonts/Roboto-Bold.ttf') format('truetype');
+  src: local('Roboto Bold'), local('Roboto-Bold'),
+       url('/fonts/Roboto-Bold.woff2') format('woff2'),
+       url('/fonts/Roboto-Bold.ttf') format('truetype');
+  font-display: swap;
 }
 
 :root {

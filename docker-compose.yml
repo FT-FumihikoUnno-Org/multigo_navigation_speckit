@@ -21,15 +21,26 @@ services:
     build:
       context: ./webapp/src/frontend
       dockerfile: Dockerfile
-    ports:
-      - "5173:5173"
+    # No host port published for Vite dev server when using nginx as reverse proxy
     environment:
       NODE_ENV: development
-      VITE_API_URL: http://localhost:3000
+      # Don't set VITE_API_URL here so client uses relative /api paths through nginx
+      # When running inside Docker, use the backend service hostname for vite proxy
+      VITE_DEV_PROXY_TARGET: http://backend:3000
     volumes:
       - ./webapp/src/frontend:/app
       - /app/node_modules # Anonymous volume to prevent host node_modules from overriding container's
     command: npm run dev
+
+  nginx:
+    image: nginx:1.25-alpine
+    ports:
+      - "5173:80"
+    volumes:
+      - ./webapp/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend
 
   db:
     image: postgres:15-alpine

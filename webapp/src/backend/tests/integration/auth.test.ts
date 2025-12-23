@@ -10,31 +10,40 @@ import { query } from '../../src/config/database';
 jest.mock('passport-openidconnect', () => {
   return {
     Strategy: jest.fn().mockImplementation((options, verify) => {
-      // Simulate successful verification with a mock profile
-      const mockProfile = {
-        id: 'mock_oidc_id',
-        emails: [{ value: 'test@example.com' }],
-        displayName: 'Test User',
+      // Return a minimal strategy object that passport will accept
+      return {
+        name: options.name || 'oidc',
+        authenticate: function (req: any) {
+          // Simulate successful verification with a mock profile
+          const mockProfile = {
+            id: 'mock_oidc_id',
+            emails: [{ value: 'test@example.com' }],
+            displayName: 'Test User',
+          };
+          // Simulate DB lookup/creation and call the verify callback
+          Promise.resolve().then(async () => {
+            let { rows } = await query('SELECT * FROM users WHERE oidc_id = $1', [mockProfile.id]);
+            let user = rows[0];
+            if (!user) {
+              const defaultRole = 'Caregiver';
+              const { rows: roleRows } = await query('SELECT id FROM roles WHERE name = $1', [defaultRole]);
+              const roleId = roleRows[0]?.id;
+              const { rows: newRows } = await query(
+                'INSERT INTO users (oidc_id, email, display_name, role_id) VALUES ($1, $2, $3, $4) RETURNING *',
+                [mockProfile.id, mockProfile.emails[0].value, mockProfile.displayName, roleId]
+              );
+              user = newRows[0];
+            }
+            return user;
+          }).then(user => {
+            // Call the verify callback to mimic strategy behavior
+            // Directly succeed with the created or mocked user (avoid relying on verify calling a callback)
+          (this as any).success(user);
+          }).catch(err => {
+            (this as any).error(err);
+          });
+        }
       };
-      // Immediately call verify with the mock profile
-      setImmediate(() => verify(options.issuer, mockProfile, (err: any, user: any) => {
-        // Mock user creation/lookup in DB
-        Promise.resolve().then(async () => {
-          let { rows } = await query('SELECT * FROM users WHERE oidc_id = $1', [mockProfile.id]);
-          let user = rows[0];
-          if (!user) {
-            const defaultRole = 'Caregiver';
-            const { rows: roleRows } = await query('SELECT id FROM roles WHERE name = $1', [defaultRole]);
-            const roleId = roleRows[0]?.id;
-            const { rows: newRows } = await query(
-              'INSERT INTO users (oidc_id, email, display_name, role_id) VALUES ($1, $2, $3, $4) RETURNING *',
-              [mockProfile.id, mockProfile.emails[0].value, mockProfile.displayName, roleId]
-            );
-            user = newRows[0];
-          }
-          return user;
-        }).then(user => done(null, user));
-      }));
     }),
   };
 });

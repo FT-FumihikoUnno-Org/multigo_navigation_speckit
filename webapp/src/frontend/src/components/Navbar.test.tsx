@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Navbar from './Navbar';
-import { AuthProvider, useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 
 // Mock useAuth to control authentication state for testing
 jest.mock('../context/AuthContext', () => ({
@@ -21,13 +21,12 @@ describe('Navbar', () => {
 
     render(
       <Router>
-        <AuthProvider>
-          <Navbar />
-        </AuthProvider>
+        <Navbar />
       </Router>
     );
 
-    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+    // MUI Button with component=Link renders as an anchor (role=link)
+    expect(screen.getByRole('link', { name: /login/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /logout/i })).not.toBeInTheDocument();
     expect(screen.queryByText(/user management/i)).not.toBeInTheDocument();
   });
@@ -43,13 +42,12 @@ describe('Navbar', () => {
 
     render(
       <Router>
-        <AuthProvider>
-          <Navbar />
-        </AuthProvider>
+        <Navbar />
       </Router>
     );
 
-    expect(screen.getByRole('button', { name: /dashboard/i })).toBeInTheDocument();
+    // Dashboard is a link (component=Link), logout is a button
+    expect(screen.getByRole('link', { name: /dashboard/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /logout \(test user\)/i })).toBeInTheDocument();
     expect(screen.queryByText(/user management/i)).not.toBeInTheDocument();
   });
@@ -65,13 +63,12 @@ describe('Navbar', () => {
 
     render(
       <Router>
-        <AuthProvider>
-          <Navbar />
-        </AuthProvider>
+        <Navbar />
       </Router>
     );
 
-    expect(screen.getByRole('button', { name: /dashboard/i })).toBeInTheDocument();
+    // Dashboard and user management are links, logout is a button
+    expect(screen.getByRole('link', { name: /dashboard/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /logout \(admin user\)/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /user management/i })).toBeInTheDocument();
   });

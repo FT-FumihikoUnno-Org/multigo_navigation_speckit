@@ -26,8 +26,8 @@ jest.mock('../../src/config/database', () => ({
       if (params[0] === 'Nurse') return Promise.resolve({ rows: [{ id: 2 }] });
       if (params[0] === 'Caregiver') return Promise.resolve({ rows: [{ id: 3 }] });
     }
-    // Mock for fetching users
-    if (sql.includes('SELECT u.id, u.oidc_id, u.email, u.display_name, r.name as role FROM users u JOIN roles r ON u.role_id = r.id')) {
+    // Mock for fetching users (flexible matching across formatting)
+    if (sql.includes('SELECT u.id') && sql.includes('JOIN roles r')) {
       return Promise.resolve({
         rows: [
           { id: 1, oidc_id: 'oidc1', email: 'admin@example.com', display_name: 'Admin User', role: 'Administrator' },
@@ -178,13 +178,29 @@ describe('User Management Endpoints (Admin Only)', () => {
   });
 
   it('PUT /api/users/:id/role should return 404 for a user not found', async () => {
-    // Mock query to return no rows for update
-    (query as jest.Mock).mockImplementationOnce((sql, params) => {
+    // Override query to simulate 'user not found' on UPDATE while preserving other mocks
+    (query as jest.Mock).mockImplementation((sql, params) => {
+        // Simulate missing user for the UPDATE call
         if (sql.includes('UPDATE users SET role_id = $1 WHERE id = $2 RETURNING *')) {
             return Promise.resolve({ rows: [] }); // Simulate user not found
         }
-        // Fallback to original mock for other queries
-        return jest.requireActual('../../src/config/database').query(sql, params);
+        // Role lookup
+        if (sql.includes('SELECT id FROM roles WHERE name = $1')) {
+            if (params[0] === 'Administrator') return Promise.resolve({ rows: [{ id: 1 }] });
+            if (params[0] === 'Nurse') return Promise.resolve({ rows: [{ id: 2 }] });
+            if (params[0] === 'Caregiver') return Promise.resolve({ rows: [{ id: 3 }] });
+        }
+        // Fetching users
+        if (sql.includes('SELECT u.id') && sql.includes('JOIN roles r')) {
+            return Promise.resolve({
+              rows: [
+                { id: 1, oidc_id: 'oidc1', email: 'admin@example.com', display_name: 'Admin User', role: 'Administrator' },
+                { id: 2, oidc_id: 'oidc2', email: 'nurse@example.com', display_name: 'Nurse User', role: 'Nurse' },
+              ],
+            });
+        }
+        // Default
+        return Promise.resolve({ rows: [] });
     });
 
     const res = await request(app)

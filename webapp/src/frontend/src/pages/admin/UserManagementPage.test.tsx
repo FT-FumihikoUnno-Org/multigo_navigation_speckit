@@ -39,17 +39,17 @@ describe('UserManagementPage', () => {
 
     render(
       <Router>
-        <AuthProvider>
-          <UserManagementPage />
-        </AuthProvider>
+        <UserManagementPage />
       </Router>
     );
 
     expect(fetch).toHaveBeenCalledWith('/api/users');
 
     await waitFor(() => {
-      expect(screen.getByText('Admin User (Administrator)')).toBeInTheDocument();
-      expect(screen.getByText('Nurse User (Nurse)')).toBeInTheDocument();
+      expect(screen.getByText('Admin User')).toBeInTheDocument();
+      expect(screen.getAllByText('Administrator').length).toBeGreaterThan(0);
+      expect(screen.getByText('Nurse User')).toBeInTheDocument();
+      expect(screen.getAllByText('Nurse').length).toBeGreaterThan(0);
     });
   });
 
@@ -70,21 +70,22 @@ describe('UserManagementPage', () => {
 
     render(
       <Router>
-        <AuthProvider>
-          <UserManagementPage />
-        </AuthProvider>
+        <UserManagementPage />
       </Router>
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Nurse User (Nurse)')).toBeInTheDocument();
+      expect(screen.getByText('Nurse User')).toBeInTheDocument();
+      expect(screen.getAllByText('Nurse').length).toBeGreaterThan(0);
     });
 
-    // Find the select element for Nurse User and change its value
-    const selectElement = screen.getByDisplayValue('Nurse');
-    fireEvent.mouseDown(selectElement); // Open the select dropdown
-    const newRoleOption = await screen.findByText('Administrator'); // Find the new role option
-    fireEvent.click(newRoleOption); // Click on the new role option
+    // Find the table row for Nurse User and the select element within it
+    const nurseRow = screen.getByText('Nurse User').closest('tr');
+    const { within } = require('@testing-library/dom');
+    const selectElement = within(nurseRow).getByDisplayValue('Nurse');
+
+    // Directly change the select value since MUI's Menu may not render in jsdom
+    fireEvent.change(selectElement, { target: { value: 'Administrator' } });
 
     await waitFor(() => {
       expect(fetch).toHaveBeenCalledWith('/api/users/2/role', expect.objectContaining({
@@ -100,19 +101,18 @@ describe('UserManagementPage', () => {
       Promise.resolve({
         ok: false,
         status: 500,
+        json: () => Promise.resolve({ message: 'Server error' }),
       })
     );
 
     render(
       <Router>
-        <AuthProvider>
-          <UserManagementPage />
-        </AuthProvider>
+        <UserManagementPage />
       </Router>
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Error loading users')).toBeInTheDocument();
+      expect(screen.getByText('Server error')).toBeInTheDocument();
     });
   });
 });

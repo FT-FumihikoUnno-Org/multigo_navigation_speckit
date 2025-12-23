@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { AuthProvider, useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import LoginPage from './LoginPage'; // Assume LoginPage will be created
 
 // Mock useAuth to control authentication state for testing
@@ -25,9 +25,7 @@ describe('LoginPage', () => {
   it('renders login button', () => {
     render(
       <Router>
-        <AuthProvider>
-          <LoginPage />
-        </AuthProvider>
+        <LoginPage />
       </Router>
     );
     expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
@@ -36,9 +34,7 @@ describe('LoginPage', () => {
   it('calls login function on button click', () => {
     render(
       <Router>
-        <AuthProvider>
-          <LoginPage />
-        </AuthProvider>
+        <LoginPage />
       </Router>
     );
     fireEvent.click(screen.getByRole('button', { name: /login/i }));
@@ -56,9 +52,7 @@ describe('LoginPage', () => {
 
     render(
       <Router>
-        <AuthProvider>
-          <LoginPage />
-        </AuthProvider>
+        <LoginPage />
       </Router>
     );
 

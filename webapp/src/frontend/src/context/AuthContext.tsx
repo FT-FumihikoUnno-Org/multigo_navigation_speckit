@@ -19,16 +19,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AuthContextType['user']>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  // Helper to read configured API base (uses process.env during tests; fallbacks to empty string)
+  const getApiBase = () => {
+    const apiEnv = (typeof process !== 'undefined' && (process.env as any).VITE_API_URL) || '';
+    return String(apiEnv).replace(/\/$/, '');
+  };
+
   // Placeholder functions for login/logout, will be implemented with actual API calls
   const login = () => {
-    // In a real app, this would redirect to your backend's /auth/login endpoint
-    window.location.href = '/api/auth/login';
+    // Redirect to backend auth login endpoint
+    const base = getApiBase();
+    const loginUrl = base ? `${base}/auth/login` : '/auth/login';
+    window.location.href = loginUrl;
   };
 
   const logout = async () => {
-    // In a real app, this would call your backend's /api/auth/logout endpoint
+    // Call backend logout endpoint
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      const base = getApiBase();
+      const logoutUrl = base ? `${base}/auth/logout` : '/auth/logout';
+      await fetch(logoutUrl, { method: 'POST', credentials: 'include' });
       setIsAuthenticated(false);
       setUser(null);
       window.location.href = '/'; // Redirect to home or login page
@@ -38,13 +48,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
+    // Skip initial session check when on the login page to avoid an expected 401 when just visiting /login
+    if (typeof window !== 'undefined' && window.location && window.location.pathname === '/login') {
+      setLoading(false);
+      return;
+    }
+
     const fetchUser = async () => {
       try {
-        const response = await fetch('/api/me');
+        // Allow configuring backend base URL via env var `VITE_API_URL`.
+        // If not provided, fall back to relative /api path (works with server proxy).
+        const base = getApiBase();
+        const url = base ? `${base}/api/me` : '/api/me';
+
+        const response = await fetch(url, { credentials: 'include' });
         if (response.ok) {
-          const userData = await response.json();
-          setIsAuthenticated(true);
-          setUser(userData);
+          const contentType = response.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            // Safe to parse JSON directly
+            try {
+              const userData = await response.json();
+              setIsAuthenticated(true);
+              setUser(userData);
+            } catch (parseErr) {
+              console.error('Failed to parse JSON from /api/me even though content-type was JSON:', parseErr);
+              setIsAuthenticated(false);
+              setUser(null);
+            }
+          } else {
+            // Not JSON — avoid parsing HTML or other payloads as JSON
+            const text = await response.text();
+            console.warn('Received non-JSON response from /api/me (content-type:', contentType, ') first 200 chars:', text.slice(0, 200));
+            setIsAuthenticated(false);
+            setUser(null);
+          }
         } else {
           setIsAuthenticated(false);
           setUser(null);

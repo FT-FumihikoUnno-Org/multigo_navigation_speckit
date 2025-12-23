@@ -34,11 +34,32 @@ export default defineConfig({
         ],
       },
       devOptions: {
-        enabled: true,
+        // Disable PWA dev registration in development to avoid a service worker
+        // hijacking network requests and serving stale or built assets that might
+        // reference an absolute backend URL.
+        enabled: process.env.NODE_ENV !== 'development',
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
       },
     }),
   ],
+  // Dev server proxy so frontend requests to /api and /auth are forwarded to backend
+  server: {
+    proxy: (() => {
+      const proxyTarget = process.env.VITE_DEV_PROXY_TARGET || process.env.VITE_API_URL || 'http://localhost:3000';
+      return {
+        '/api': {
+          target: proxyTarget,
+          changeOrigin: true,
+          secure: false,
+        },
+        '/auth': {
+          target: proxyTarget,
+          changeOrigin: true,
+          secure: false,
+        },
+      };
+    })(),
+  },
 });

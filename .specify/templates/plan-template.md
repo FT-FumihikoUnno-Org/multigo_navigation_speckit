@@ -31,13 +31,6 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- **I. ROS2-Native Development**: Does the plan utilize ROS2 packages and client libraries correctly?
-- **II. Clear Separation of Concerns**: Is the proposed structure modular, with each component having a single responsibility?
-- **III. Configuration-Driven Behavior**: Are nodes and components designed to be configurable via ROS parameters?
-- **IV. Composition via Launch Files**: Does the plan include launch files for running the feature?
-- **V. Test-Driven Development (TDD)**: Does the plan include tasks for writing tests before implementation?
-- **VI. Bilingual Documentation (English & Japanese)**: Does the plan account for creating documentation in both English and Japanese?
-
 [Gates determined based on constitution file]
 
 ## Project Structure

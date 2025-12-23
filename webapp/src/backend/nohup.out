@@ -1,0 +1,27 @@
+
+> backend@1.0.0 start:dummy
+> ts-node src/dummyServer.ts
+
+Dummy auth server running on port 3001
+
+> backend@1.0.0 start
+> ts-node src/server.ts
+
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+Server running on port 3000
+Terminated
+Terminated
+npm error Lifecycle script `start:dummy` failed with error:
+npm error code 143
+npm error path /workspaces/try-spec-kit/.ignore/multigo_navigation_speckit/webapp/src/backend
+npm error workspace backend@1.0.0
+npm error location /workspaces/try-spec-kit/.ignore/multigo_navigation_speckit/webapp/src/backend
+npm error command failed
+npm error command sh -c ts-node src/dummyServer.ts
+npm error Lifecycle script `start` failed with error:
+npm error code 143
+npm error path /workspaces/try-spec-kit/.ignore/multigo_navigation_speckit/webapp/src/backend
+npm error workspace backend@1.0.0
+npm error location /workspaces/try-spec-kit/.ignore/multigo_navigation_speckit/webapp/src/backend
+npm error command failed
+npm error command sh -c ts-node src/server.ts

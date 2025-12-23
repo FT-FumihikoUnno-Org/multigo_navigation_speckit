@@ -57,7 +57,7 @@ passport.deserializeUser(async (id: number, done) => {
 
 // A dummy admin-only route to test protection
 const adminRouter = express.Router();
-const requireRole = (roleName: string) => (req: request.Request, res: express.Response, next: express.NextFunction) => {
+const requireRole = (roleName: string) => (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const user = (req as any).user;
     if (user && user.role === roleName) {
         return next();

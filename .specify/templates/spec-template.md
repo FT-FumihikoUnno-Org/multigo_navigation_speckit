@@ -1,7 +1,3 @@
-<!--
-  CONSTITUTION REMINDER: Per principle VI, this specification must be bilingual. 
-  Ensure that content is available in both English and Japanese.
--->
 # Feature Specification: [FEATURE NAME]
 
 **Feature Branch**: `[###-feature-name]`  

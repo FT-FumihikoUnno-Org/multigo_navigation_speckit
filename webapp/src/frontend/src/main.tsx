@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
+import './i18n'; // Initialize i18next for react-i18next
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import { AuthProvider } from './context/AuthContext'; // Import AuthProvider

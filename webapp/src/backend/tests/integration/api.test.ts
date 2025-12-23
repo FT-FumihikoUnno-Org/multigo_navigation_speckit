@@ -3,7 +3,7 @@
 import request from 'supertest';
 // Assuming the Express app instance is exported from src/server.ts or a similar entry point.
 // Adjust the import path if necessary based on the actual project structure.
-import app from '../../../server'; // This path is relative to the test file.
+import app from '../../src/server'; // Import the Express app from src/server.ts
 
 describe('API Integration Tests', () => {
 
@@ -12,8 +12,8 @@ describe('API Integration Tests', () => {
   // More sophisticated tests would involve setting up mock users and roles.
 
   describe('Authentication Endpoints', () => {
-    test('POST /api/auth/login should initiate OIDC flow and return a redirect', async () => {
-      const response = await request(app).post('/api/auth/login');
+    test('GET /auth/login should initiate OIDC flow and return a redirect', async () => {
+      const response = await request(app).get('/auth/login');
       // Assuming the login endpoint initiates an OAuth2/OIDC flow which typically results in a redirect.
       // The exact status code might vary (e.g., 302 Found).
       expect(response.status).toBeGreaterThanOrEqual(300);
@@ -21,11 +21,11 @@ describe('API Integration Tests', () => {
       // Further checks could involve verifying the 'Location' header if it's predictable.
     });
 
-    test('POST /api/auth/logout should clear session and return success', async () => {
+    test('POST /auth/logout should clear session and return success', async () => {
       // To properly test logout, one would typically need to simulate a logged-in state first.
       // For this initial test, we'll assume logout successfully clears any existing session.
       // A successful logout might return 200 OK or redirect to a login page.
-      const response = await request(app).post('/api/auth/logout');
+      const response = await request(app).post('/auth/logout');
       expect(response.status).toBe(200); // Assuming a 200 OK for successful logout without redirection context.
       // If it redirects, check for status 3xx and 'Location' header.
     });
@@ -35,9 +35,9 @@ describe('API Integration Tests', () => {
   });
 
   describe('User Endpoints', () => {
-    test('GET /api/users/me should return 401 if not authenticated', async () => {
+    test('GET /api/me should return 401 if not authenticated', async () => {
       // This endpoint requires authentication. Without it, it should return unauthorized.
-      const response = await request(app).get('/api/users/me');
+      const response = await request(app).get('/api/me');
       expect(response.status).toBe(401); // Unauthorized
     });
 
@@ -55,8 +55,8 @@ describe('API Integration Tests', () => {
       expect(response.status).toBe(401); // Unauthorized
     });
 
-    test('POST /api/users/:id/role should return 401 if not authenticated', async () => {
-      const response = await request(app).post('/api/users/123/role').send({ role: 'Admin' });
+    test('PUT /api/users/:id/role should return 401 if not authenticated', async () => {
+      const response = await request(app).put('/api/users/123/role').send({ roleName: 'Admin' });
       expect(response.status).toBe(401); // Unauthorized
     });
 

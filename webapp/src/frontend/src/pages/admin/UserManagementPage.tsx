@@ -98,7 +98,7 @@ const UserManagementPage: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((u) => (
+            {(Array.isArray(users) ? users : []).map((u) => (
               <TableRow key={u.id}>
                 <TableCell>{u.id}</TableCell>
                 <TableCell>{u.display_name}</TableCell>

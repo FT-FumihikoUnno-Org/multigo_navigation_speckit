@@ -47,6 +47,16 @@ description: "Task list for implementing the Multi-Go Web App with Role-Based Ac
     - テストフレームワークをセットアップ: `webapp/src/backend/` にJestとSupertest、`webapp/src/frontend/` にJestとReact Testing Library。
 - [X] T006 Configure `docker-compose.yml` to run the backend, frontend (dev server), and a PostgreSQL database service.
     - バックエンド、フロントエンド（開発サーバー）、PostgreSQLデータベースサービスを実行するために`docker-compose.yml`を設定。
+- [X] T048 Create a development-only dummy OpenID Connect provider `dummyauth` in `webapp/src/dummyauth/`. Implement `/authorize`, `/authorize-login`, `/token`, `/jwks.json`, and `/health`. Ensure `id_token` is RS256-signed and JWKs exposes the public key `kid`/`alg`. (Dev-only; exclude from production.)
+    - `webapp/src/dummyauth/src/` にダミー OIDC サーバーを実装。`/authorize`, `/authorize-login`, `/token`, `/jwks.json`, `/health` を含め、`id_token` は RS256 で署名。ドキュメントとテストを含む。
+- [X] T049 Add `dummyauth` to `docker-compose.dev.yml` and provide a development nginx reverse-proxy config under `webapp/nginx/` to present frontend and backend as same-origin in dev. Ensure `dummyauth` and the dev nginx config are **only** included in development compose overrides and not in production.
+    - `docker-compose.dev.yml` に `dummyauth` と dev nginx を追加し、同一オリジンでのテストを容易にする。開発専用であることを明確にする。
+- [X] T050 Update backend Passport configuration to support `DEV_INTERNAL_OIDC_ISSUER` (internal token/userinfo calls) and `DEV_EXTERNAL_OIDC_ISSUER` (browser redirect issuer), and add an in-memory dev state store to avoid session-based state verification failures during testing.
+    - `webapp/src/backend/src/config/passport.ts` を更新し、内部/外部発行者のサポートと、開発用のインメモリ state store を実装。
+- [X] T051 Add an integration-level E2E smoke test that exercises the login flow against `dummyauth` (using cookie jar and following redirects) to verify session creation and redirect-to-frontend behavior.
+    - 統合 E2E テストを追加し、`dummyauth` を使ってフルログインフローを検証する（cookie jar とリダイレクト追跡を使用）。
+- [X] T052 Update `webapp/README.md` to document how to start the development stack with `dummyauth` and the dev reverse-proxy, and explicitly state that `dummyauth` is development-only.
+    - `webapp/README.md` を更新し、`dummyauth` の起動方法と開発専用であることを明記する。
 
 ---
 

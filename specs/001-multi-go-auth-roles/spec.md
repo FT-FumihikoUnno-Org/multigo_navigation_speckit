@@ -94,3 +94,23 @@ The "Multi-Go" system requires a centralized and user-friendly interface for man
 - The full implementation of features accessible to any role (e.g., the content of the "Dashboard View"). / いずれのロールでもアクセス可能な機能（例：「ダッシュボードビュー」のコンテンツ）の完全な実装。
 - Support for mobile phone screen sizes (below 768px). / 携帯電話の画面サイズ（768px未満）のサポート。
 - Two-factor authentication (2FA). / 二要素認証（2FA）。
+
+## 9. Development & Testing (Dev-only) / 開発とテスト（開発専用）
+
+To enable reliable local development and automated CI tests for the full OpenID Connect flow, we provide a lightweight, development-only OIDC provider referred to as **dummyauth**. This service is explicitly for development and test usage and **must not** be used in production.
+
+Purpose / 目的
+- Simulate an external Identity Provider (IdP) so developers and CI can exercise the entire authorization-code OIDC flow (authorization → code → token exchange → id_token validation → session creation).
+- Allow deterministic, reproducible end-to-end tests without depending on external third-party IdPs.
+
+Requirements / 要件
+- Endpoints: The service must expose at least `/authorize` (login form), `/authorize-login` (form POST to generate an authorization code), `/token` (authorization_code exchange), `/jwks.json` (public keys/JWKS), `/userinfo` (optional), and `/health`.
+- Token semantics: `id_token` MUST be signed with RS256 and include standard claims: `iss`, `sub`, `aud`, `exp`, `iat`, and (if provided) `nonce`. The JWKS endpoint must expose the public key with a `kid` and `alg`.
+- Dev-only: The implementation must be included only in development (e.g., `docker-compose.dev.yml`) and explicitly excluded from production deployments. It must be clearly annotated in documentation that it is for testing and **not** for production use.
+- Internal vs External addresses: When running under Docker compose, the backend service should call token/userinfo endpoints using an internal service host (e.g., `http://dummyauth:3001`), while browser redirects for authorization use an external address (e.g., `http://localhost:3001`). Configuration variables such as `DEV_INTERNAL_OIDC_ISSUER` and `DEV_EXTERNAL_OIDC_ISSUER` should be supported to allow flexible addressing in dev vs prod.
+- Test coverage: Include an integration-level E2E smoke test that exercises the complete login flow against `dummyauth` (using a cookie jar) to verify session creation, id_token validation, and correct redirect to the frontend dashboard.
+
+Documentation / ドキュメント
+- Document how to start the development stack with `dummyauth` in `webapp/README.md`, including the dev-only nature, URLs (authorize/token/jwks), and a short troubleshooting note.
+
+**Note:** Any differences in behavior between `dummyauth` and a production IdP (e.g., simplified user store, deterministic signing keys) must be documented and kept minimal so that tests remain meaningful.

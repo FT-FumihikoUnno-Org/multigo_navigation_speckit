@@ -93,7 +93,16 @@ webapp/src/
 
 **Structure Decision**: The selected structure provides a clean separation between the presentation layer (frontend) and the business/data logic (backend), which is ideal for this type of web application.
 **構成決定**: 選択された構造は、プレゼンテーション層（フロントエンド）とビジネス/データロジック（バックエンド）をきれいに分離しており、このタイプのWebアプリケーションに最適です。
+## Dev Infrastructure (Dev-only helpers) / 開発用インフラ（開発専用）
 
+For local development and CI validation we include a set of development-only helpers to make testing and debugging the OIDC login flow reliable and reproducible. These helpers are **for development and testing only** and must not be used in production deployments.
+
+- **dummyauth**: A lightweight local OpenID Connect provider implemented under `webapp/src/dummyauth/`. It provides `/authorize` (login UI), `/authorize-login` (form POST -> authorization code), `/token` (code -> tokens), `/jwks.json` (public keys), `/userinfo` (optional), and `/health` endpoints. `id_token` is RS256-signed and JWKS exposes the public key `kid` and `alg`.
+- **Dev issuer addressing**: The dev stack exposes two issuer addresses to match real-world network topology: `DEV_EXTERNAL_OIDC_ISSUER` (external URL used for browser redirects, e.g., `http://localhost:3001`) and `DEV_INTERNAL_OIDC_ISSUER` (internal service URL used by backend to call token/userinfo, e.g., `http://dummyauth:3001`). Passport and backend code should support both values.
+- **Dev reverse-proxy**: An nginx config (under `webapp/nginx/`) is used in development to present the frontend and backend as same-origin for convenient local testing (avoid CORS and cookie issues). Run the dev stack via `docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build` to include dummyauth and the reverse-proxy.
+- **Testing**: Add an integration-level E2E smoke test that runs the full login flow against `dummyauth` (using a cookie jar and following redirects) to ensure session creation and redirect behavior work reliably.
+
+Note: Keep the behavior of dev helpers minimal and documented so the tests remain representative of production flows.
 ## Complexity Tracking / 複雑性の追跡
 
 N/A

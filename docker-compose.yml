@@ -1,3 +1,6 @@
+# Docker Compose (Development)
+# NOTE: このファイルは**開発 / ローカル検証用**です。本番環境では使用しないでください。
+#       本番用の `docker-compose.prod.yml` を作成して、本番専用構成（公開ポート、ボリューム、開発用サービスの除外など）を定義してください。
 version: '3.8'
 
 services:

@@ -1,0 +1,21 @@
+# Docker Compose (Development overrides)
+# This file is intended for DEVELOPMENT / LOCAL TESTING only.
+# - Use together with the main `docker-compose.yml` when you need dev-only services like the dummy auth server.
+# - Example: `docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build`
+
+version: '3.8'
+
+services:
+  # Dummy OIDC authentication server for local development/testing only
+  dummyauth:
+    image: node:18-alpine
+    working_dir: /app
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./webapp/src/dummyauth:/app
+      - /app/node_modules
+    command: sh -c "npm install --no-audit --no-fund --silent && npm run start"
+    depends_on:
+      - backend
+    # Note: this service MUST NOT be included in production deployments.

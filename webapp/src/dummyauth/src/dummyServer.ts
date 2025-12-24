@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import { generateKeyPair, SignJWT, exportJWK } from 'jose';
+import crypto from 'crypto';
 // uuidv4 is replaced by crypto.randomUUID()
 // import { v4 as uuidv4 } from 'uuid';
 import { Buffer } from 'buffer'; // Buffer is needed for key export type compatibility if needed, though exportJWK returns an object directly.

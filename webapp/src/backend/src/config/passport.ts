@@ -29,17 +29,19 @@ passport.deserializeUser(async (id: number, done) => {
 
 // --- Test Configuration for Dummy OIDC Server ---
 // This configuration is used to test the authentication flow with a local dummy server.
-// It bypasses the issuer discovery and points directly to the dummy endpoints.
+// It uses the OIDC_ISSUER_URL env var when available so the dev compose can point the backend
+// at the running `dummyauth` container (e.g. http://dummyauth:3001).
+const DEV_OIDC_ISSUER = process.env.OIDC_ISSUER_URL || 'http://localhost:3001';
 passport.use(
   'oidc',
   new OpenIDConnectStrategy(
     {
-      issuer: 'dummy-issuer', // Added to satisfy type checking
-      authorizationURL: 'http://localhost:3001/auth',
-      tokenURL: 'http://localhost:3001/token',
-      userInfoURL: 'http://localhost:3001/userinfo',
-      clientID: 'dummy-client-id',
-      clientSecret: 'dummy-client-secret',
+      issuer: DEV_OIDC_ISSUER,
+      authorizationURL: `${DEV_OIDC_ISSUER}/authorize`,
+      tokenURL: `${DEV_OIDC_ISSUER}/token`,
+      userInfoURL: `${DEV_OIDC_ISSUER}/userinfo`,
+      clientID: process.env.OIDC_CLIENT_ID || 'my-dummy-client-id',
+      clientSecret: process.env.OIDC_CLIENT_SECRET || 'my-dummy-client-secret',
       callbackURL: OIDC_REDIRECT_URI,
       scope: 'openid profile email',
     },

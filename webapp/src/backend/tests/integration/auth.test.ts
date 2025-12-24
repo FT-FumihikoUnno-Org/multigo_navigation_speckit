@@ -3,7 +3,7 @@ import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
 import { Strategy as OpenIDConnectStrategy } from 'passport-openidconnect';
-import { OIDC_CLIENT_ID, OIDC_CLIENT_SECRET, OIDC_ISSUER_URL, OIDC_REDIRECT_URI, SESSION_SECRET } from '../../src/config';
+import { OIDC_CLIENT_ID, OIDC_CLIENT_SECRET, OIDC_ISSUER_URL, OIDC_REDIRECT_URI, FRONTEND_URL, SESSION_SECRET } from '../../src/config';
 import { query } from '../../src/config/database';
 
 // Mock the passport strategy to avoid actual OIDC calls during testing
@@ -109,15 +109,15 @@ app.get('/auth/openid', passport.authenticate('oidc'));
 app.get(
   '/auth/openid/callback',
   passport.authenticate('oidc', {
-    successRedirect: '/dashboard',
-    failureRedirect: '/login',
+    successRedirect: `${FRONTEND_URL}/dashboard`,
+    failureRedirect: `${FRONTEND_URL}/login`,
   })
 );
 
 describe('OpenID Connect Callback', () => {
   it('should redirect to /dashboard on successful authentication and create a session', async () => {
     const res = await request(app).get('/auth/openid/callback').expect(302);
-    expect(res.header.location).toBe('/dashboard');
+    expect(res.header.location).toBe(`${FRONTEND_URL}/dashboard`);
   });
 
   // Add more tests for failure cases, user existence, etc.

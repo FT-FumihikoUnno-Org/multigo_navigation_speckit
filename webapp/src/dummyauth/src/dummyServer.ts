@@ -13,6 +13,8 @@ import { Buffer } from 'buffer'; // Buffer is needed for key export type compati
 
 dotenv.config();
 
+const isDev = process.env.NODE_ENV !== 'production';
+
 const app = express();
 const port = process.env.DUMMY_SERVER_PORT || 3001;
 
@@ -43,7 +45,7 @@ async function initializeKeys() {
     jwk.alg = 'RS256'; // Algorithm
     jwk.kty = 'RSA'; // Key Type
     jwks = { keys: [jwk] };
-    console.log('RSA Keys generated and cached.');
+    if (isDev) console.log('RSA Keys generated and cached.');
   } catch (error) {
     console.error('Error generating RSA keys:', error);
     process.exit(1);
@@ -131,7 +133,7 @@ const loginFormHTML = (errorMessage?: string, oidcParams?: Record<string, string
 
 // 1) Authorization Endpoint (GET)
 app.get('/authorize', (req, res) => {
-  console.log('[Auth Server] GET /authorize');
+  if (isDev) console.log('[Auth Server] GET /authorize');
   const queryParams = req.query as Record<string, string>;
   const { response_type, client_id, redirect_uri, state, nonce } = queryParams;
 
@@ -139,18 +141,18 @@ app.get('/authorize', (req, res) => {
     return res.status(400).send('Missing required OIDC parameters (response_type, client_id, redirect_uri, state)');
   }
 
-  console.log('Received OIDC params:', { response_type, client_id, redirect_uri, state, nonce });
+  if (isDev) console.log('Received OIDC params:', { response_type, client_id, redirect_uri, state, nonce });
 
   res.send(loginFormHTML(undefined, { response_type, client_id, redirect_uri, state, nonce }));
 });
 
 // 2) Authorization Code Grant (POST from login form)
 app.post('/authorize-login', async (req, res) => {
-  console.log('[Auth Server] POST /authorize-login');
+  if (isDev) console.log('[Auth Server] POST /authorize-login');
   const { username, password, response_type, client_id, redirect_uri, state, nonce } = req.body as Record<string, string>;
 
   if (!username || !password) {
-    console.log('Missing username or password');
+    if (isDev) console.log('Missing username or password');
     // Use 303 to instruct the user-agent to GET the login page on redirect after a POST
     return res.redirect(303, `/login?error=${encodeURIComponent('Username and password are required.')}&state=${state || ''}`);
   }
@@ -162,7 +164,7 @@ app.post('/authorize-login', async (req, res) => {
 
   // Store code in memory with expiry
   authCodes.set(code, authCodeData);
-  console.log(`Generated auth code: ${code}`);
+  if (isDev) console.log(`Generated auth code: ${code}`);
 
   // Basic cleanup for expired codes (run once after code is generated)
   setTimeout(() => {
@@ -170,13 +172,13 @@ app.post('/authorize-login', async (req, res) => {
       const data = authCodes.get(code);
       if (data && (Date.now() - data.timestamp) > CODE_EXPIRY_SECONDS * 1000) {
         authCodes.delete(code);
-        console.log(`Auth code ${code} expired and removed.`);
+        if (isDev) console.log(`Auth code ${code} expired and removed.`);
       }
     }
   }, CODE_EXPIRY_SECONDS * 1000 + 1000);
 
   const finalRedirectUri = `${redirect_uri}?code=${code}&state=${state}`;
-  console.log(`Redirecting to client: ${finalRedirectUri}`);
+  if (isDev) console.log(`Redirecting to client: ${finalRedirectUri}`);
   // Use 303 See Other on form POST responses to ensure user-agent performs a GET to the callback
   res.redirect(303, finalRedirectUri);
 });
@@ -185,7 +187,7 @@ app.post('/authorize-login', async (req, res) => {
 app.post('/simulate-auth-failure', async (req, res) => {
   const { state } = req.body as Record<string, string>; // Need state to redirect back correctly
   const errorMessage = 'Simulated authentication failure.';
-  console.log('Simulating authentication failure.');
+  if (isDev) console.log('Simulating authentication failure.');
   // Redirect back to login page with error, preserving state if provided
   const redirectUrl = `/login?error=${encodeURIComponent(errorMessage)}${state ? `&state=${state}` : ''}`;
   // Use 303 to ensure the client performs a GET when redirected after POST
@@ -194,10 +196,10 @@ app.post('/simulate-auth-failure', async (req, res) => {
 
 // 3) Token Endpoint (POST)
 app.post('/token', async (req, res) => {
-  console.log('[Auth Server] POST /token');
+  if (isDev) console.log('[Auth Server] POST /token');
   const { grant_type, code, redirect_uri, client_id } = req.body as Record<string, string>;
 
-  console.log('Received token request:', { grant_type, code, redirect_uri, client_id });
+  if (isDev) console.log('Received token request:', { grant_type, code, redirect_uri, client_id });
 
   if (grant_type !== 'authorization_code') {
     return res.status(400).json({ error: 'unsupported_grant_type', error_description: 'Only authorization_code grant type is supported.' });
@@ -239,7 +241,7 @@ app.post('/token', async (req, res) => {
 
   const access_token = code; // Dummy access token
 
-  console.log(`Tokens issued for user ${authCodeData.username}.`);
+  if (isDev) console.log(`Tokens issued for user ${authCodeData.username}.`);
   res.json({
     access_token: access_token,
     id_token: id_token,
@@ -250,7 +252,7 @@ app.post('/token', async (req, res) => {
 
 // 4) JWKS Endpoint (GET)
 app.get('/jwks.json', (req, res) => {
-  console.log('[Auth Server] GET /jwks.json');
+  if (isDev) console.log('[Auth Server] GET /jwks.json');
   res.json(jwks);
 });
 
@@ -272,7 +274,7 @@ app.get('/health', (req, res) => {
 async function startServer() {
   await initializeKeys();
   app.listen(port, () => {
-    console.log(`Dummy OIDC Authentication Server is running on ${ISSUER}`);
+    if (isDev) console.log(`Dummy OIDC Authentication Server is running on ${ISSUER}`);
   });
 }
 

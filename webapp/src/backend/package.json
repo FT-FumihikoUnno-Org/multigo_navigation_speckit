@@ -9,8 +9,7 @@
     "test": "jest",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write src/**/*.ts",
-    "migrate": "ts-node src/migrate.ts",
-    "start:dummy": "ts-node src/dummyServer.ts"
+    "migrate": "ts-node src/migrate.ts"
   },
   "keywords": [],
   "author": "",

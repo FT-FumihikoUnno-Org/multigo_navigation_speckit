@@ -1,0 +1,27 @@
+{
+  "name": "dummyauth",
+  "version": "1.0.0",
+  "description": "A dummy authentication server for development purposes",
+  "main": "src/dummyServer.ts",
+  "type": "module",
+  "scripts": {
+    "start": "DUMMY_SERVER_PORT=3001 ts-node src/dummyServer.ts",
+    "build": "tsc",
+    "dev": "DUMMY_SERVER_PORT=3001 nodemon src/dummyServer.ts"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jose": "^6.1.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.5",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.3",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

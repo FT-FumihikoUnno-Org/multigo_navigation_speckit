@@ -1,0 +1,59 @@
+# Docker Compose (Production template)
+# NOTE: This file is a **production template** and should be used for production deployments.
+# - Do NOT include development-only services such as the dummy auth server here.
+# - Review and configure secrets, volumes, and network policies before deploying.
+# - Recommended: use CI/CD to build and push images, and deploy using the image names below.
+
+version: '3.8'
+
+services:
+  # Backend: build or use a pre-built image; do not mount source volumes in production
+  backend:
+    image: multigo_navigation_baseline-backend:latest
+    # Alternatively, if you prefer building on the target host, uncomment build block below
+    # build:
+    #   context: ./webapp/src/backend
+    #   dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL:-postgres://user:password@db:5432/multigo}
+      SESSION_SECRET: ${SESSION_SECRET}
+    depends_on:
+      - db
+
+  # Frontend: serve a built static bundle using a production-grade web server.
+  frontend:
+    image: multigo_navigation_baseline-frontend:latest
+    # When using an image, ensure it contains built static assets served by nginx or similar.
+    environment:
+      NODE_ENV: production
+
+  # Nginx (optional): reverse proxy for frontend and backend. Map to port 80 on the host.
+  nginx:
+    image: nginx:1.25-alpine
+    ports:
+      - "80:80"
+    volumes:
+      # Use a production nginx config that serves static frontend files and proxies /api to backend
+      - ./webapp/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend
+
+  # Database: Postgres in a production deployment should be managed (RDS, managed service, or dedicated container)
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-multigo}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+    name: multigo_db_data
+
+# Notes:
+# - This file is intentionally conservative: no source code mounts, no dev-only services, and explicit image names.
+# - Before deploying, set secrets securely (env files, secret manager) and confirm network/firewall rules.

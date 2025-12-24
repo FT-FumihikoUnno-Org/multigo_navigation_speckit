@@ -20,9 +20,10 @@ services:
       - backend
     # Note: this service MUST NOT be included in production deployments.
 
-  # Ensure backend calls the dev issuer via the compose service name
+  # Ensure backend calls the dev issuer via the compose service name and browser redirects go to host
   backend:
     environment:
       OIDC_ISSUER_URL: http://dummyauth:3001
+      OIDC_EXTERNAL_ISSUER: http://localhost:3001
       OIDC_CLIENT_ID: my-dummy-client-id
       OIDC_CLIENT_SECRET: my-dummy-client-secret

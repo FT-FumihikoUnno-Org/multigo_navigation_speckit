@@ -3,6 +3,10 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import { generateKeyPair, SignJWT, exportJWK } from 'jose';
 import crypto from 'crypto';
+// Ensure Web Crypto API is available for jose when running under Node 18
+if (!(globalThis as any).crypto) {
+  (globalThis as any).crypto = (crypto as any).webcrypto;
+}
 // uuidv4 is replaced by crypto.randomUUID()
 // import { v4 as uuidv4 } from 'uuid';
 import { Buffer } from 'buffer'; // Buffer is needed for key export type compatibility if needed, though exportJWK returns an object directly.

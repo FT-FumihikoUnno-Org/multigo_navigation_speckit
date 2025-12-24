@@ -15,7 +15,7 @@ services:
     volumes:
       - ./webapp/src/dummyauth:/app
       - /app/node_modules
-    command: sh -c "npm install --no-audit --no-fund --silent && npm run start"
+    command: sh -c "npm install --no-audit --no-fund --silent && npm run build && node dist/dummyServer.js"
     depends_on:
       - backend
     # Note: this service MUST NOT be included in production deployments.

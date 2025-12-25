@@ -3,6 +3,7 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import RoleBasedGuard from './components/RoleBasedGuard'; // Import RoleBasedGuard
+import Navbar from './components/Navbar'; // Mount Navbar
 import { Typography } from '@mui/material'; // For Forbidden page
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 
@@ -20,6 +21,7 @@ const ForbiddenPage: React.FC = () => {
 function App() {
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forbidden" element={<ForbiddenPage />} /> {/* Add Forbidden Page */}

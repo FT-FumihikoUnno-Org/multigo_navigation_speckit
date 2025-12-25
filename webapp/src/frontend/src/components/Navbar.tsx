@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Select, MenuItem, SelectChangeEvent } from '@mui/material'; // Import SelectChangeEvent
+import { AppBar, Toolbar, Typography, Button, ButtonGroup } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -8,8 +8,8 @@ const Navbar: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const { t, i18n } = useTranslation(); // Initialize useTranslation and i18n instance
 
-  const changeLanguage = (event: SelectChangeEvent) => { // Use SelectChangeEvent
-    i18n.changeLanguage(event.target.value);
+  const setLang = (lang: string) => {
+    i18n.changeLanguage(lang);
   };
 
   return (
@@ -38,15 +38,13 @@ const Navbar: React.FC = () => {
             {t('login')}
           </Button>
         )}
-        <Select
-          value={i18n.language}
-          onChange={changeLanguage}
-          sx={{ color: 'white', '.MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255, 255, 255, 0.5)' } }}
-        >
-          <MenuItem value="en">EN</MenuItem>
-          <MenuItem value="ja">JA</MenuItem>
-          <MenuItem value="zh">ZH</MenuItem>
-        </Select>
+
+        {/* Always-visible language buttons */}
+        <ButtonGroup variant="text" color="inherit" sx={{ ml: 2 }}>
+          <Button onClick={() => setLang('en')}>EN</Button>
+          <Button onClick={() => setLang('ja')}>JA</Button>
+          <Button onClick={() => setLang('zh')}>ZH</Button>
+        </ButtonGroup>
       </Toolbar>
     </AppBar>
   );

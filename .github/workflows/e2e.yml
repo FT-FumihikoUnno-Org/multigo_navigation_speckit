@@ -1,0 +1,89 @@
+name: E2E Tests (Playwright)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install backend deps
+        run: |
+          cd webapp/src/backend
+          npm ci
+
+      - name: Run backend unit tests
+        run: |
+          cd webapp/src/backend
+          npm run test:backend --silent
+
+      - name: Upload backend test results (logs)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-logs
+          path: webapp/src/backend/test-results || ''
+
+  e2e:
+    needs: backend-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure docker compose available
+        run: docker compose version
+
+      - name: Start dev stack (CI override)
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.ci.yml -f docker-compose.dev.yml up -d --build
+
+      - name: Wait for services to be ready
+        run: |
+          for i in $(seq 1 30); do
+            if docker compose -f docker-compose.yml -f docker-compose.ci.yml -f docker-compose.dev.yml run --rm --entrypoint "" e2e sh -c "curl -fsS http://nginx/ >/dev/null 2>&1 && curl -fsS http://backend:3000/health >/dev/null 2>&1 && curl -fsS http://dummyauth:3001/health >/dev/null 2>&1" >/dev/null 2>&1; then
+              echo "services healthy"
+              exit 0
+            fi
+            echo "waiting for services... ($i/30)"
+            sleep 2
+          done
+          echo "timed out waiting for services" && exit 1
+
+      - name: Run DB migrations
+        run: docker compose run --rm backend npm run migrate
+
+      - name: Run E2E tests (Playwright inside e2e service)
+        run: |
+          docker compose run --rm e2e sh -lc "npm run e2e:install && npm run e2e:test -- --reporter=html,junit"
+
+      - name: Collect docker-compose logs
+        run: docker compose logs --no-color > compose-logs.txt || true
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: webapp/playwright-report
+
+      - name: Upload compose logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: compose-logs
+          path: compose-logs.txt
+
+      - name: Teardown
+        if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml -f docker-compose.dev.yml down -v --remove-orphans

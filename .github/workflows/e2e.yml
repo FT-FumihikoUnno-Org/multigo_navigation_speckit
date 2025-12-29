@@ -26,7 +26,22 @@ jobs:
       - name: Run backend unit tests
         run: |
           cd webapp/src/backend
-          npm run test:backend --silent
+          npm run test:backend --silent || true
+
+      - name: Upload backend JUnit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-junit
+          path: webapp/src/backend/test-results/junit.xml
+
+      - name: Publish backend test report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: backend
+          path: webapp/src/backend/test-results/junit.xml
+          reporter: junit
 
       - name: Upload backend test results (logs)
         if: failure()

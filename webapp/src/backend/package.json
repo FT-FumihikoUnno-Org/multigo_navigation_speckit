@@ -9,13 +9,15 @@
     "test": "jest",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write src/**/*.ts",
-    "migrate": "ts-node src/migrate.ts"
+    "migrate": "ts-node src/migrate.ts",
+    "test:backend": "jest --verbose --runInBand 'src/**/*.test.ts'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/supertest": "^6.0.3",
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "express-session": "^1.18.2",
@@ -44,7 +46,8 @@
     "prettier": "^3.7.4",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "jest-junit": "^13.0.0"
   },
   "directories": {
     "test": "tests"

@@ -24,3 +24,9 @@ coverage/
 # Ignore build artifacts if any
 dist/
 build/
+
+# Ignore Playwright cache and reports
+.cache/
+.cache/ms-playwright/
+webapp/**/playwright-report/
+webapp/**/test-results/

@@ -22,7 +22,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // --- OIDC 設定 ---
-const ISSUER = 'http://localhost:3001'; // Dummy Auth Server Issuer URI
+// Respect environment variables so the external issuer used in redirects
+// can be configured for different deployment contexts (host vs container).
+const ISSUER = process.env.OIDC_EXTERNAL_ISSUER || process.env.DEV_EXTERNAL_OIDC_ISSUER || `http://localhost:${port}`;
 const CLIENT_ID_SECRET = 'my-dummy-client-id'; // Dummy client ID
 const CLIENT_SECRET = 'my-dummy-client-secret'; // Dummy client secret
 const CODE_EXPIRY_SECONDS = 300; // Authorization code expiry in seconds

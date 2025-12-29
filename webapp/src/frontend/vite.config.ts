@@ -46,6 +46,9 @@ export default defineConfig({
   ],
   // Dev server proxy so frontend requests to /api and /auth are forwarded to backend
   server: {
+    // Accept connections from the development nginx reverse-proxy (host: "nginx")
+    host: true,
+    allowedHosts: ['nginx', 'localhost', '127.0.0.1'],
     proxy: (() => {
       const proxyTarget = process.env.VITE_DEV_PROXY_TARGET || process.env.VITE_API_URL || 'http://localhost:3000';
       return {

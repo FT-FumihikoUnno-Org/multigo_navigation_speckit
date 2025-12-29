@@ -46,7 +46,9 @@ export default app;
 
 // Start the server only when not testing
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+  // Bind explicitly to 0.0.0.0 so the server is reachable via the Docker network (IPv4)
+  const numericPort = typeof port === 'string' ? parseInt(port, 10) : port;
+  app.listen(numericPort, '0.0.0.0', () => {
+    console.log(`Server running on port ${numericPort}`);
   });
 }

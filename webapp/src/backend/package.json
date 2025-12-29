@@ -10,6 +10,8 @@
     "lint": "eslint src --ext .ts",
     "format": "prettier --write src/**/*.ts",
     "migrate": "ts-node src/migrate.ts",
+    "bootstrap-admin": "ts-node src/cmd/bootstrap-admin.ts",
+    "admin": "ts-node src/cmd/admin.ts",
     "test:backend": "jest --verbose --runInBand 'src/**/*.test.ts'"
   },
   "keywords": [],

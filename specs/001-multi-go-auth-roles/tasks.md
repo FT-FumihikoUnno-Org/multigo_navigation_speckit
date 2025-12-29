@@ -79,10 +79,15 @@ description: "Task list for implementing the Multi-Go Web App with Role-Based Ac
 - [X] T064 Add pending approval redirect and frontend `PendingApprovalPage` so unapproved users are shown a pending page (`/pending`).
 - [X] T065 Ensure Passport dev state store is used in non-production to avoid state verification problems when testing with `dummyauth`.
 
-<!-- New follow-ups (not started) -->
-- [ ] T066 Create an explicit CLI or safe script to bootstrap the first admin (recommended replacement for migration-based optional seed).
-- [ ] T067 Integrate the `force_password_change` flow into frontend UX (show change-password page/modals when flagged).
-- [ ] T068 Add CI test flakiness monitoring and retry/backoff policy for E2E to improve stability on CI.
+<!-- New follow-ups (tracked) -->
+- [X] T066 Create an explicit CLI or safe script to bootstrap the first admin (recommended replacement for migration-based optional seed). / **T066: 最初の管理者をブートストラップするための明示的なCLIまたは安全なスクリプトを作成（マイグレーションベースのオプションシードの推奨代替）。**
+  - `webapp/src/backend/src/cmd/bootstrap-admin.ts` (CLI entrypoint) — provides `runBootstrapAdmin` to create admin users programmatically. / `webapp/src/backend/src/cmd/bootstrap-admin.ts`（CLI エントリポイント）— `runBootstrapAdmin` を提供し、プログラムから管理者ユーザーを作成できます。
+  - `webapp/src/backend/src/cmd/admin.ts` (admin helper CLI with list-pending / approve / revoke / show / set-role commands). / `webapp/src/backend/src/cmd/admin.ts`（管理者用ヘルパーCLI: `list-pending`、`approve`、`revoke`、`show`、`set-role` コマンドを含む）。
+  - Unit and integration tests: `webapp/src/backend/tests/unit/bootstrap-admin.test.ts`, `webapp/src/backend/tests/integration/bootstrap-admin.integration.test.ts`. / ユニットおよび統合テスト: `webapp/src/backend/tests/unit/bootstrap-admin.test.ts`, `webapp/src/backend/tests/integration/bootstrap-admin.integration.test.ts`。
+  - Note: Migration-based optional seeding (`003`/`004`) remains available; the explicit CLI is the recommended safe mechanism for bootstrapping admins. / 注: マイグレーションベースのオプションシード（`003`/`004`）は引き続き利用可能です。明示的なCLIは、管理者の安全な初期化手段として推奨されます。
+  - **UI**: No admin GUI page was implemented as part of this change (per spec). Admin actions are available via CLI/API only. / **UI**: 本変更では管理者向けのページ（GUI）は実装していません（仕様どおり）。管理操作はCLI/API経由で行います。
+- [ ] T067 Integrate the `force_password_change` flow into frontend UX (show change-password page/modals when flagged). / T067: `force_password_change` フローをフロントエンドUXに統合（フラグが立っている場合にパスワード変更ページ/モーダルを表示）。
+- [ ] T068 Add CI test flakiness monitoring and retry/backoff policy for E2E to improve stability on CI. / T068: CI における E2E の不安定性を軽減するためのフラッキーモニタリングとリトライ/バックオフポリシーを追加。
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented.
 **目的**: ユーザーストーリーの実装を開始する前に完了しなければならないコアインフラ。

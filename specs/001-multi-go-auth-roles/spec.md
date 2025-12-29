@@ -2,10 +2,10 @@
 # 機能仕様書: ロールベースアクセス権を持つMulti-Goウェブアプリ
 
 **Version / バージョン**: 1.0
-**Status / ステータス**: In progress / 開発中
+**Status / ステータス**: In progress — admin CLI and migrations restored and validated. / 開発中 — 管理者 CLI とマイグレーションを復元して検証済みです。
 **Author / 作成者**: Gemini
 **Created / 作成日**: 2025-12-17
-**Last Updated / 最終更新日**: 2025-12-29
+**Last Updated / 最終更新日**: 2025-12-29 (更新: 2025-12-29) (updated: 2025-12-29)
 
 ## 1. Description / 概要
 

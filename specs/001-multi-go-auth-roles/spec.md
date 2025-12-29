@@ -2,10 +2,10 @@
 # 機能仕様書: ロールベースアクセス権を持つMulti-Goウェブアプリ
 
 **Version / バージョン**: 1.0
-**Status / ステータス**: Draft / ドラフト
+**Status / ステータス**: In progress / 開発中
 **Author / 作成者**: Gemini
 **Created / 作成日**: 2025-12-17
-**Last Updated / 最終更新日**: 2025-12-17
+**Last Updated / 最終更新日**: 2025-12-29
 
 ## 1. Description / 概要
 
@@ -99,6 +99,10 @@ The "Multi-Go" system requires a centralized and user-friendly interface for man
 
 To enable reliable local development and automated CI tests for the full OpenID Connect flow, we provide a lightweight, development-only OIDC provider referred to as **dummyauth**. This service is explicitly for development and test usage and **must not** be used in production.
 
+Status / 現状（2025-12-29）
+- **Implemented**: `dummyauth` service, dev nginx reverse-proxy, CI-friendly E2E runner (Dockerfile.e2e), Playwright E2E tests, and related docs have been implemented and verified locally. See the `webapp` README and CI workflow for run instructions.
+- **Testing**: Backend and frontend unit tests are wired to a global Jest setup to ensure Passport and test polyfills are consistently initialized. JUnit reports for both unit tests and Playwright E2E are generated and published by CI.
+
 Purpose / 目的
 - Simulate an external Identity Provider (IdP) so developers and CI can exercise the entire authorization-code OIDC flow (authorization → code → token exchange → id_token validation → session creation).
 - Allow deterministic, reproducible end-to-end tests without depending on external third-party IdPs.
@@ -111,6 +115,6 @@ Requirements / 要件
 - Test coverage: Include an integration-level E2E smoke test that exercises the complete login flow against `dummyauth` (using a cookie jar) to verify session creation, id_token validation, and correct redirect to the frontend dashboard.
 
 Documentation / ドキュメント
-- Document how to start the development stack with `dummyauth` in `webapp/README.md`, including the dev-only nature, URLs (authorize/token/jwks), and a short troubleshooting note.
+- Document how to start the development stack with `dummyauth` in `webapp/README.md`, including the dev-only nature, URLs (authorize/token/jwks), and a short troubleshooting note. The README has been updated to include E2E and dummyauth run instructions.
 
 **Note:** Any differences in behavior between `dummyauth` and a production IdP (e.g., simplified user store, deterministic signing keys) must be documented and kept minimal so that tests remain meaningful.

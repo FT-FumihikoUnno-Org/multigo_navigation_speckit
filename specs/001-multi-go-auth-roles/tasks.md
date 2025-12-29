@@ -2,6 +2,8 @@
 description: "Task list for implementing the Multi-Go Web App with Role-Based Access"
 ---
 
+<!-- Updated tasks and status as of 2025-12-29: added tasks completed during implementation and new follow-ups -->
+
 # Tasks: Multi-Go Web App with Role-Based Access
 # タスク: ロールベースアクセス権を持つMulti-Goウェブアプリ
 
@@ -61,6 +63,26 @@ description: "Task list for implementing the Multi-Go Web App with Role-Based Ac
 ---
 
 ## Phase 2: Foundational (Blocking Prerequisites) / フェーズ2: 基盤 (ブロッキング前提条件)
+
+<!-- Completed after initial implementation -->
+- [X] T053 Add `approved` boolean column to `users` table (migration `003_add_user_approved_column.ts`).
+- [X] T054 Add local auth columns and optional admin seed (migration `004_add_local_auth_columns_and_seed_admin.ts`).
+- [X] T055 Implement local auth helpers (`webapp/src/backend/src/services/localAuth.ts`) using scrypt with bcrypt fallback and tests.
+- [X] T056 Implement `/auth/local` and `/auth/local/change-password` endpoints and `forcePasswordChange` middleware in `webapp/src/backend/src/api/auth.ts` and `webapp/src/backend/src/middleware/`.
+- [X] T057 Add integration tests for local auth (`webapp/src/backend/tests/integration/localAuth.test.ts`).
+- [X] T058 Add global Jest setup for backend (`jest.setup.ts`) to load Passport config and ensure consistent session behavior in tests.
+- [X] T059 Ensure frontend test setup (`setupTests.ts`) initializes i18n, global fetch mock, and polyfills for TextEncoder/TextDecoder and is referenced in `jest.config.cjs`.
+- [X] T060 Add Playwright E2E tests and Dockerfile.e2e + `e2e` service in docker-compose, with a runner script for CI (`webapp/Dockerfile.e2e`, `scripts/ci/run-e2e.sh`).
+- [X] T061 Update CI workflows to run `backend-tests` and `frontend-tests`, publish JUnit reports for both, and only run E2E after unit tests pass (update `.github/workflows/e2e.yml`).
+- [X] T062 Add Vite `allowedHosts` configuration to permit the dev nginx host and avoid dev host 403 errors (`webapp/src/frontend/vite.config.ts`).
+- [X] T063 Document admin bootstrapping via migration and BOOTSTRAP env vars (migration `004` seed) in README and add example commands to seed an admin user.
+- [X] T064 Add pending approval redirect and frontend `PendingApprovalPage` so unapproved users are shown a pending page (`/pending`).
+- [X] T065 Ensure Passport dev state store is used in non-production to avoid state verification problems when testing with `dummyauth`.
+
+<!-- New follow-ups (not started) -->
+- [ ] T066 Create an explicit CLI or safe script to bootstrap the first admin (recommended replacement for migration-based optional seed).
+- [ ] T067 Integrate the `force_password_change` flow into frontend UX (show change-password page/modals when flagged).
+- [ ] T068 Add CI test flakiness monitoring and retry/backoff policy for E2E to improve stability on CI.
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented.
 **目的**: ユーザーストーリーの実装を開始する前に完了しなければならないコアインフラ。

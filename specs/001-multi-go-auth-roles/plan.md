@@ -8,6 +8,11 @@
 
 This plan outlines the technical approach for building a foundational web application to manage the "Multi-Go" system. The core of this implementation is to establish a robust framework for user authentication (via OpenID Connect, OAuth, etc.) and role-based access control (RBAC) for `Administrator`, `Nurse`, and `Caregiver` roles. The application will be a Progressive Web App (PWA) to ensure offline usability.
 
+Status / 現状（2025-12-29）
+
+- Completed: Development-only `dummyauth` OIDC provider, dev nginx reverse-proxy, local and CI Playwright E2E runner and tests, `approved` column migration and local-auth migrations and seed, local auth implementation (scrypt hashing + bcrypt fallback), `/auth/local` endpoints and tests, global Jest setup for backend and frontend, and CI workflows that run unit tests (backend & frontend), publish JUnit reports, and run E2E only after unit tests pass.
+- Verified: Backend and frontend unit tests and Playwright E2E smoke tests run locally; CI workflow updated to publish JUnit and Playwright reports.
+- Ongoing / Next: Add an admin CLI for safe admin bootstrapping, integrate force-password-change UI in frontend, and keep CI stability monitoring.
 この計画は、「Multi-Go」システムを管理するための基本的なWebアプリケーションを構築するための技術的アプローチを概説します。この実装の中核は、`管理者`、`看護士`、`介護士`のロールに対するユーザー認証（OpenID Connect, OAuth経由, etc.）とロールベースアクセス制御（RBAC）のための堅牢なフレームワークを確立することです。アプリケーションは、オフラインでの使いやすさを確保するためにプログレッシブウェブアプリ（PWA）になります。
 
 ## Technical Context / 技術的背景

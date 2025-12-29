@@ -43,6 +43,7 @@
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
     "vite-plugin-pwa": "^1.2.0",
-    "whatwg-url": "^11.0.0"
+    "whatwg-url": "^11.0.0",
+    "jest-junit": "^13.0.0"
   }
 }

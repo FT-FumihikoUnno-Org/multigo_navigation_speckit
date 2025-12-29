@@ -50,8 +50,51 @@ jobs:
           name: backend-test-logs
           path: webapp/src/backend/test-results || ''
 
+  frontend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install frontend deps
+        run: |
+          cd webapp/src/frontend
+          npm ci
+
+      - name: Run frontend unit tests
+        run: |
+          cd webapp/src/frontend
+          npm test --silent || true
+
+      - name: Upload frontend JUnit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-junit
+          path: webapp/src/frontend/test-results/junit.xml
+
+      - name: Publish frontend test report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: frontend
+          path: webapp/src/frontend/test-results/junit.xml
+          reporter: junit
+
+      - name: Upload frontend test logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-test-logs
+          path: webapp/src/frontend/test-results || ''
+
   e2e:
-    needs: backend-tests
+    needs: [backend-tests, frontend-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:

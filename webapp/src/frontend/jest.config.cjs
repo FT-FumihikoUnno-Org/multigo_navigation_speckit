@@ -6,6 +6,10 @@ module.exports = {
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
   },
   setupFilesAfterEnv: ['<rootDir>/setupTests.ts'],
+  reporters: [
+    'default',
+    ['jest-junit', { outputDirectory: '<rootDir>/test-results', outputName: 'junit.xml' }]
+  ],
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
   },

@@ -55,3 +55,7 @@ Thumbs.db
 *.tmp
 *.swp
 .idea/
+
+# Test artifacts
+test-results/
+webapp/**/test-results/
